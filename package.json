@@ -14,15 +14,15 @@
     "test:integration": "jest --config ./tests/jest-e2e.json --runInBand"
   },
   "dependencies": {
-    "@types/cron": "1.7.1",
     "cron": "1.7.2",
     "uuid": "3.3.3"
   },
   "devDependencies": {
     "@nestjs/common": "6.10.11",
     "@nestjs/core": "6.10.11",
-    "@nestjs/platform-express": "6.10.11",
-    "@nestjs/testing": "6.10.11",
+    "@nestjs/platform-express": "6.10.10",
+    "@nestjs/testing": "6.10.10",
+    "@types/cron": "1.7.1",
     "@types/jest": "24.0.23",
     "@types/node": "7.10.8",
     "@types/uuid": "3.4.6",
