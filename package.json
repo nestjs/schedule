@@ -21,8 +21,8 @@
   "devDependencies": {
     "@nestjs/common": "6.10.11",
     "@nestjs/core": "6.10.11",
-    "@nestjs/platform-express": "6.10.10",
-    "@nestjs/testing": "6.10.10",
+    "@nestjs/platform-express": "6.10.11",
+    "@nestjs/testing": "6.10.11",
     "@types/jest": "24.0.23",
     "@types/node": "7.10.8",
     "@types/uuid": "3.4.6",
