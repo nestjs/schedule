@@ -3,7 +3,7 @@ import {
   OnApplicationBootstrap,
   OnApplicationShutdown,
 } from '@nestjs/common';
-import { CronCommand, CronJob } from 'cron';
+import { CronJob } from 'cron';
 import uuid from 'uuid/v4';
 import { CronOptions } from './decorators/cron.decorator';
 import { SchedulersRegistry } from './schedulers.registry';
@@ -69,7 +69,7 @@ export class SchedulersOrchestrator
       const { options, target } = this.cronJobs[key];
       const cronJob = new CronJob(
         options.cronTime,
-        target as CronCommand,
+        target as any,
         undefined,
         false,
         options.timeZone,
