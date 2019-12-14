@@ -18,7 +18,7 @@ export function Interval(
 ): MethodDecorator {
   const [name, intervalTimeout] = isString(nameOrTimeout)
     ? [nameOrTimeout, timeout]
-    : [undefined, timeout];
+    : [undefined, nameOrTimeout];
 
   return applyDecorators(
     SetMetadata(SCHEDULE_INTERVAL_OPTIONS, { timeout: intervalTimeout }),

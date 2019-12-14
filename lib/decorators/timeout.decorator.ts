@@ -18,7 +18,7 @@ export function Timeout(
 ): MethodDecorator {
   const [name, timeoutValue] = isString(nameOrTimeout)
     ? [nameOrTimeout, timeout]
-    : [undefined, timeout];
+    : [undefined, nameOrTimeout];
 
   return applyDecorators(
     SetMetadata(SCHEDULE_TIMEOUT_OPTIONS, { timeout: timeoutValue }),
