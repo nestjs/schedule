@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CronJob } from 'cron';
+import { NO_SCHEDULER_FOUND } from './schedule.messages';
 
 @Injectable()
 export class SchedulersRegistry {
@@ -8,15 +9,27 @@ export class SchedulersRegistry {
   private readonly intervals = new Map<string, number>();
 
   getCron(name: string) {
-    return this.cronJobs.get(name);
+    const ref = this.cronJobs.get(name);
+    if (!ref) {
+      throw new Error(NO_SCHEDULER_FOUND('Cron', name));
+    }
+    return ref;
   }
 
   getInterval(name: string) {
-    return this.intervals.get(name);
+    const ref = this.intervals.get(name);
+    if (typeof ref === 'undefined') {
+      throw new Error(NO_SCHEDULER_FOUND('Interval', name));
+    }
+    return ref;
   }
 
   getTimeout(name: string) {
-    return this.timeouts.get(name);
+    const ref = this.timeouts.get(name);
+    if (typeof ref === 'undefined') {
+      throw new Error(NO_SCHEDULER_FOUND('Timeout', name));
+    }
+    return ref;
   }
 
   addCron(name: string, job: CronJob) {
