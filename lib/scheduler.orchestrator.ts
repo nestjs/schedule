@@ -1,12 +1,8 @@
-import {
-  Injectable,
-  OnApplicationBootstrap,
-  OnApplicationShutdown,
-} from '@nestjs/common';
+import { Injectable, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
 import { CronJob } from 'cron';
 import uuid from 'uuid/v4';
 import { CronOptions } from './decorators/cron.decorator';
-import { SchedulersRegistry } from './schedulers.registry';
+import { SchedulerRegistry } from './scheduler.registry';
 
 type TargetHost = { target: Function };
 type TimeoutHost = { timeout: number };
@@ -21,13 +17,13 @@ type TimeoutOptions = TargetHost & TimeoutHost & RefHost<number>;
 type CronJobOptions = TargetHost & CronOptionsHost & RefHost<CronJob>;
 
 @Injectable()
-export class SchedulersOrchestrator
+export class SchedulerOrchestrator
   implements OnApplicationBootstrap, OnApplicationShutdown {
   private readonly cronJobs: Record<string, CronJobOptions> = {};
   private readonly timeouts: Record<string, TimeoutOptions> = {};
   private readonly intervals: Record<string, IntervalOptions> = {};
 
-  constructor(private readonly schedulersRegistry: SchedulersRegistry) {}
+  constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 
   onApplicationBootstrap() {
     this.mountTimeouts();
@@ -48,7 +44,7 @@ export class SchedulersOrchestrator
       const intervalRef = setInterval(options.target, options.timeout);
 
       options.ref = intervalRef;
-      this.schedulersRegistry.addInterval(key, intervalRef);
+      this.schedulerRegistry.addInterval(key, intervalRef);
     });
   }
 
@@ -59,7 +55,7 @@ export class SchedulersOrchestrator
       const timeoutRef = setTimeout(options.target, options.timeout);
 
       options.ref = timeoutRef;
-      this.schedulersRegistry.addTimeout(key, timeoutRef);
+      this.schedulerRegistry.addTimeout(key, timeoutRef);
     });
   }
 
@@ -81,7 +77,7 @@ export class SchedulersOrchestrator
       cronJob.start();
 
       this.cronJobs[key].ref = cronJob;
-      this.schedulersRegistry.addCron(key, cronJob);
+      this.schedulerRegistry.addCron(key, cronJob);
     });
   }
 

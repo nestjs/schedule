@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '../../lib/decorators';
-import { SchedulersRegistry } from '../../lib/schedulers.registry';
+import { SchedulerRegistry } from '../../lib/scheduler.registry';
 
 @Injectable()
 export class CronService {
   callsCount = 0;
 
-  constructor(private readonly schedulersRegistry: SchedulersRegistry) {}
+  constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 
   @Cron('* * * * * *', {
     name: 'test',
@@ -14,7 +14,7 @@ export class CronService {
   handleCron() {
     ++this.callsCount;
     if (this.callsCount > 2) {
-      const ref = this.schedulersRegistry.getCron('test');
+      const ref = this.schedulerRegistry.getCron('test');
       ref!.stop();
     }
   }

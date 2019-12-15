@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { SchedulersRegistry } from '../../lib/schedulers.registry';
+import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
 
@@ -29,7 +29,7 @@ describe('Cron', () => {
 
   it(`should return cron id by name`, async () => {
     await app.init();
-    const registry = app.get(SchedulersRegistry);
+    const registry = app.get(SchedulerRegistry);
     expect(registry.getCron('test')).not.toBeUndefined();
   });
 

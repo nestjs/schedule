@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Interval } from '../../lib/decorators';
-import { SchedulersRegistry } from '../../lib/schedulers.registry';
+import { SchedulerRegistry } from '../../lib/scheduler.registry';
 
 @Injectable()
 export class IntervalService {
   called = false;
 
-  constructor(private readonly schedulersRegistry: SchedulersRegistry) {}
+  constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 
   @Interval('test', 2500)
   handleInterval() {
     this.called = true;
-    clearInterval(this.schedulersRegistry.getInterval('test'));
+    clearInterval(this.schedulerRegistry.getInterval('test'));
   }
 }

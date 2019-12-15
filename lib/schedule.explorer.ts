@@ -4,12 +4,12 @@ import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
 import { SchedulerType } from './enums/scheduler-type.enum';
 import { SchedulerMetadataAccessor } from './schedule-metadata.accessor';
-import { SchedulersOrchestrator } from './schedulers.orchestrator';
+import { SchedulerOrchestrator } from './scheduler.orchestrator';
 
 @Injectable()
 export class ScheduleExplorer implements OnModuleInit {
   constructor(
-    private readonly schedulersOrchestrator: SchedulersOrchestrator,
+    private readonly schedulerOrchestrator: SchedulerOrchestrator,
     private readonly discoveryService: DiscoveryService,
     private readonly metadataAccessor: SchedulerMetadataAccessor,
     private readonly metadataScanner: MetadataScanner,
@@ -41,7 +41,7 @@ export class ScheduleExplorer implements OnModuleInit {
     switch (metadata) {
       case SchedulerType.CRON: {
         const cronMetadata = this.metadataAccessor.getCronMetadata(methodRef);
-        return this.schedulersOrchestrator.addCron(
+        return this.schedulerOrchestrator.addCron(
           methodRef.bind(instance),
           cronMetadata!,
         );
@@ -51,7 +51,7 @@ export class ScheduleExplorer implements OnModuleInit {
           methodRef,
         );
         const name = this.metadataAccessor.getSchedulerName(methodRef);
-        return this.schedulersOrchestrator.addTimeout(
+        return this.schedulerOrchestrator.addTimeout(
           methodRef.bind(instance),
           timeoutMetadata!.timeout,
           name,
@@ -62,7 +62,7 @@ export class ScheduleExplorer implements OnModuleInit {
           methodRef,
         );
         const name = this.metadataAccessor.getSchedulerName(methodRef);
-        return this.schedulersOrchestrator.addInterval(
+        return this.schedulerOrchestrator.addInterval(
           methodRef.bind(instance),
           intervalMetadata!.timeout,
           name,

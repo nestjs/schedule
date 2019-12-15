@@ -3,7 +3,7 @@ import { CronJob } from 'cron';
 import { NO_SCHEDULER_FOUND } from './schedule.messages';
 
 @Injectable()
-export class SchedulersRegistry {
+export class SchedulerRegistry {
   private readonly cronJobs = new Map<string, CronJob>();
   private readonly timeouts = new Map<string, number>();
   private readonly intervals = new Map<string, number>();
