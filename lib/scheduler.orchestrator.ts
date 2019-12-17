@@ -1,4 +1,8 @@
-import { Injectable, OnApplicationBootstrap, OnApplicationShutdown } from '@nestjs/common';
+import {
+  Injectable,
+  OnApplicationBootstrap,
+  OnApplicationShutdown,
+} from '@nestjs/common';
 import { CronJob } from 'cron';
 import uuid from 'uuid/v4';
 import { CronOptions } from './decorators/cron.decorator';
@@ -77,7 +81,7 @@ export class SchedulerOrchestrator
       cronJob.start();
 
       this.cronJobs[key].ref = cronJob;
-      this.schedulerRegistry.addCron(key, cronJob);
+      this.schedulerRegistry.addCronJob(key, cronJob);
     });
   }
 

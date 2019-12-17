@@ -33,6 +33,42 @@ describe('Timeout', () => {
     expect(registry.getTimeout('test')).not.toBeUndefined();
   });
 
+  it(`should add dynamic timeout`, async () => {
+    const service = app.get(TimeoutService);
+    await app.init();
+    service.addTimeout();
+    const registry = app.get(SchedulerRegistry);
+    expect(registry.getTimeout('dynamic')).not.toBeUndefined();
+  });
+
+  it(`should return dynamic timeout`, async () => {
+    const service = app.get(TimeoutService);
+    await app.init();
+    service.addTimeout();
+    const registry = app.get(SchedulerRegistry);
+    const timeouts = registry.getTimeouts();
+    expect(timeouts).toContain('dynamic');
+    const timeout = registry.getTimeout('dynamic');
+    expect(timeout).toBeDefined();
+  });
+
+  it(`should delete dynamic timeout`, async () => {
+    const service = app.get(TimeoutService);
+    await app.init();
+    service.addTimeout();
+    const registry = app.get(SchedulerRegistry);
+    let timeout = registry.getTimeout('dynamic');
+    expect(timeout).toBeDefined();
+    registry.deleteTimeout('dynamic');
+    try {
+      timeout = registry.getTimeout('dynamic');
+    } catch (e) {
+      expect(e.message).toEqual(
+        'No Timeout was found with the given name (dynamic). Check that you created one with a decorator or with the create API.',
+      );
+    }
+  });
+
   afterEach(async () => {
     await app.close();
   });

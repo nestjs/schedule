@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CronJob } from 'cron';
-import { NO_SCHEDULER_FOUND } from './schedule.messages';
+import * as cron from 'cron';
+import { NO_SCHEDULER_FOUND, DUPLICATE_SCHEDULER } from './schedule.messages';
 
 @Injectable()
 export class SchedulerRegistry {
@@ -8,10 +9,10 @@ export class SchedulerRegistry {
   private readonly timeouts = new Map<string, number>();
   private readonly intervals = new Map<string, number>();
 
-  getCron(name: string) {
+  getCronJob(name: string) {
     const ref = this.cronJobs.get(name);
     if (!ref) {
-      throw new Error(NO_SCHEDULER_FOUND('Cron', name));
+      throw new Error(NO_SCHEDULER_FOUND('Cron Job', name));
     }
     return ref;
   }
@@ -32,15 +33,57 @@ export class SchedulerRegistry {
     return ref;
   }
 
-  addCron(name: string, job: CronJob) {
+  addCronJob(name: string, job: CronJob) {
+    const ref = this.cronJobs.get(name);
+    if (ref) {
+      throw new Error(DUPLICATE_SCHEDULER('Cron Job', name));
+    }
     this.cronJobs.set(name, job);
   }
 
   addInterval(name: string, intervalId: number) {
+    const ref = this.intervals.get(name);
+    if (ref) {
+      throw new Error(DUPLICATE_SCHEDULER('Interval', name));
+    }
     this.intervals.set(name, intervalId);
   }
 
   addTimeout(name: string, timeoutId: number) {
+    const ref = this.timeouts.get(name);
+    if (ref) {
+      throw new Error(DUPLICATE_SCHEDULER('Timeout', name));
+    }
     this.timeouts.set(name, timeoutId);
+  }
+
+  getCronJobs(): Map<string, CronJob> {
+    return this.cronJobs;
+  }
+
+  deleteCronJob(name: string) {
+    const cronJob = this.getCronJob(name);
+    cronJob.stop();
+    this.cronJobs.delete(name);
+  }
+
+  getIntervals(): string[] {
+    return [...this.intervals.keys()];
+  }
+
+  deleteInterval(name: string) {
+    const interval = this.getInterval(name);
+    clearInterval(interval);
+    this.intervals.delete(name);
+  }
+
+  getTimeouts(): string[] {
+    return [...this.timeouts.keys()];
+  }
+
+  deleteTimeout(name: string) {
+    const timeout = this.getTimeout(name);
+    clearTimeout(timeout);
+    this.timeouts.delete(name);
   }
 }
