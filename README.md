@@ -36,7 +36,7 @@ $ npm i --save @nestjs/schedule
 
 ## Quick Start
 
-TBD
+[Overview & Tutorial](https://docs.nestjs.com/techniques/task-scheduling)
 
 ## Support
 
