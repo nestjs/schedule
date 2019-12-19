@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { CronJob } from 'cron';
-import * as cron from 'cron';
-import { NO_SCHEDULER_FOUND, DUPLICATE_SCHEDULER } from './schedule.messages';
+import { DUPLICATE_SCHEDULER, NO_SCHEDULER_FOUND } from './schedule.messages';
 
 @Injectable()
 export class SchedulerRegistry {
   private readonly cronJobs = new Map<string, CronJob>();
-  private readonly timeouts = new Map<string, number>();
-  private readonly intervals = new Map<string, number>();
+  private readonly timeouts = new Map<string, any>();
+  private readonly intervals = new Map<string, any>();
 
   getCronJob(name: string) {
     const ref = this.cronJobs.get(name);
@@ -41,7 +40,7 @@ export class SchedulerRegistry {
     this.cronJobs.set(name, job);
   }
 
-  addInterval(name: string, intervalId: number) {
+  addInterval<T = any>(name: string, intervalId: T) {
     const ref = this.intervals.get(name);
     if (ref) {
       throw new Error(DUPLICATE_SCHEDULER('Interval', name));
@@ -49,7 +48,7 @@ export class SchedulerRegistry {
     this.intervals.set(name, intervalId);
   }
 
-  addTimeout(name: string, timeoutId: number) {
+  addTimeout<T = any>(name: string, timeoutId: T) {
     const ref = this.timeouts.get(name);
     if (ref) {
       throw new Error(DUPLICATE_SCHEDULER('Timeout', name));
