@@ -33,6 +33,42 @@ describe('Interval', () => {
     expect(registry.getInterval('test')).not.toBeUndefined();
   });
 
+  it(`should add dynamic interval`, async () => {
+    const service = app.get(IntervalService);
+    await app.init();
+    service.addInterval();
+    const registry = app.get(SchedulerRegistry);
+    expect(registry.getInterval('dynamic')).not.toBeUndefined();
+  });
+
+  it(`should return dynamic interval`, async () => {
+    const service = app.get(IntervalService);
+    await app.init();
+    service.addInterval();
+    const registry = app.get(SchedulerRegistry);
+    const intervals = registry.getIntervals();
+    expect(intervals).toContain('dynamic');
+    const interval = registry.getInterval('dynamic');
+    expect(interval).toBeDefined();
+  });
+
+  it(`should delete dynamic interval`, async () => {
+    const service = app.get(IntervalService);
+    await app.init();
+    service.addInterval();
+    const registry = app.get(SchedulerRegistry);
+    let interval = registry.getInterval('dynamic');
+    expect(interval).toBeDefined();
+    registry.deleteInterval('dynamic');
+    try {
+      interval = registry.getInterval('dynamic');
+    } catch (e) {
+      expect(e.message).toEqual(
+        'No Interval was found with the given name (dynamic). Check that you created one with a decorator or with the create API.',
+      );
+    }
+  });
+
   afterEach(async () => {
     await app.close();
   });
