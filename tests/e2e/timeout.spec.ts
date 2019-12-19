@@ -37,6 +37,7 @@ describe('Timeout', () => {
     const service = app.get(TimeoutService);
     await app.init();
     service.addTimeout();
+
     const registry = app.get(SchedulerRegistry);
     expect(registry.getTimeout('dynamic')).not.toBeUndefined();
   });
@@ -45,9 +46,11 @@ describe('Timeout', () => {
     const service = app.get(TimeoutService);
     await app.init();
     service.addTimeout();
+
     const registry = app.get(SchedulerRegistry);
     const timeouts = registry.getTimeouts();
     expect(timeouts).toContain('dynamic');
+
     const timeout = registry.getTimeout('dynamic');
     expect(timeout).toBeDefined();
   });
@@ -56,9 +59,11 @@ describe('Timeout', () => {
     const service = app.get(TimeoutService);
     await app.init();
     service.addTimeout();
+
     const registry = app.get(SchedulerRegistry);
     let timeout = registry.getTimeout('dynamic');
     expect(timeout).toBeDefined();
+
     registry.deleteTimeout('dynamic');
     try {
       timeout = registry.getTimeout('dynamic');

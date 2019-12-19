@@ -45,9 +45,11 @@ describe('Interval', () => {
     const service = app.get(IntervalService);
     await app.init();
     service.addInterval();
+
     const registry = app.get(SchedulerRegistry);
     const intervals = registry.getIntervals();
     expect(intervals).toContain('dynamic');
+
     const interval = registry.getInterval('dynamic');
     expect(interval).toBeDefined();
   });
@@ -56,9 +58,11 @@ describe('Interval', () => {
     const service = app.get(IntervalService);
     await app.init();
     service.addInterval();
+
     const registry = app.get(SchedulerRegistry);
     let interval = registry.getInterval('dynamic');
     expect(interval).toBeDefined();
+
     registry.deleteInterval('dynamic');
     try {
       interval = registry.getInterval('dynamic');

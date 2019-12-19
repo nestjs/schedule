@@ -47,12 +47,16 @@ describe('Cron', () => {
     const addedJob = service.addCronJob();
     const registry = app.get(SchedulerRegistry);
     const jobs = registry.getCronJobs();
+
     expect(jobs.get('dynamic')).toEqual(addedJob);
+
     const job = registry.getCronJob('dynamic');
     expect(job).toBeDefined();
     expect(job.running).toBeUndefined();
+
     job.start();
     expect(job.running).toEqual(true);
+
     jest.runAllTimers();
     expect(service.dynamicCallsCount).toEqual(3);
   });
@@ -60,10 +64,13 @@ describe('Cron', () => {
   it(`should delete dynamic cron job`, async () => {
     const service = app.get(CronService);
     await app.init();
+
     service.addCronJob();
+
     const registry = app.get(SchedulerRegistry);
     let job = registry.getCronJob('dynamic');
     expect(job).toBeDefined();
+
     registry.deleteCronJob('dynamic');
     try {
       job = registry.getCronJob('dynamic');
