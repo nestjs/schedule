@@ -53,6 +53,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nestjs/config"
+    "url": "https://github.com/nestjs/schedule"
   }
 }
