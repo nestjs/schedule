@@ -14,7 +14,7 @@
     "test:integration": "jest --config ./tests/jest-e2e.json --runInBand"
   },
   "dependencies": {
-    "cron": "1.7.2",
+    "cron": "1.8.1",
     "uuid": "3.3.3"
   },
   "devDependencies": {
