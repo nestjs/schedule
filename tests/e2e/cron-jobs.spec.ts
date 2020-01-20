@@ -3,9 +3,20 @@ import { Test } from '@nestjs/testing';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
+import sinon from 'sinon';
+
+const deleteAllRegisteredJobsExceptOne = (
+  registry: SchedulerRegistry,
+  name: string,
+) => {
+  Array.from(registry.getCronJobs().keys())
+    .filter(key => key !== name)
+    .forEach(item => registry.deleteCronJob(item));
+};
 
 describe('Cron', () => {
   let app: INestApplication;
+  let clock: sinon.SinonFakeTimers;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -13,7 +24,7 @@ describe('Cron', () => {
     }).compile();
 
     app = module.createNestApplication();
-    jest.useFakeTimers();
+    clock = sinon.useFakeTimers({ now: 1577836800000 }); // 2020-01-01T00:00:00.000Z
   });
 
   it(`should schedule "cron"`, async () => {
@@ -22,15 +33,70 @@ describe('Cron', () => {
     expect(service.callsCount).toEqual(0);
 
     await app.init();
-    jest.runAllTimers();
+    clock.tick(3000);
 
     expect(service.callsCount).toEqual(3);
+  });
+
+  it(`should run "cron" once after 30 seconds`, async () => {
+    const service = app.get(CronService);
+
+    await app.init();
+    const registry = app.get(SchedulerRegistry);
+    const job = registry.getCronJob('EXECUTES_EVERY_30_SECONDS');
+    deleteAllRegisteredJobsExceptOne(registry, 'EXECUTES_EVERY_30_SECONDS');
+
+    expect(job.running).toBeTruthy();
+    expect(service.callsCount).toEqual(0);
+
+    clock.tick('30');
+    expect(service.callsCount).toEqual(1);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:30.000Z'));
+
+    clock.tick('31');
+    expect(job.running).toBeFalsy();
+  });
+
+  it(`should run "cron" 3 times every 60 seconds`, async () => {
+    const service = app.get(CronService);
+
+    await app.init();
+    expect(service.callsCount).toEqual(0);
+
+    const registry = app.get(SchedulerRegistry);
+    const job = registry.getCronJob('EXECUTES_EVERY_MINUTE');
+    deleteAllRegisteredJobsExceptOne(registry, 'EXECUTES_EVERY_MINUTE');
+
+    clock.tick('03:00');
+    expect(service.callsCount).toEqual(3);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:03:00.000Z'));
+
+    clock.tick('03:01');
+    expect(job.running).toBeFalsy();
+  });
+
+  it(`should run "cron" 3 times every hour`, async () => {
+    const service = app.get(CronService);
+
+    await app.init();
+    expect(service.callsCount).toEqual(0);
+
+    const registry = app.get(SchedulerRegistry);
+    const job = registry.getCronJob('EXECUTES_EVERY_HOUR');
+    deleteAllRegisteredJobsExceptOne(registry, 'EXECUTES_EVERY_HOUR');
+
+    clock.tick('03:00:00');
+    expect(service.callsCount).toEqual(3);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T03:00:00.000Z'));
+
+    clock.tick('03:00:01');
+    expect(job.running).toBeFalsy();
   });
 
   it(`should return cron id by name`, async () => {
     await app.init();
     const registry = app.get(SchedulerRegistry);
-    expect(registry.getCronJob('test')).not.toBeUndefined();
+    expect(registry.getCronJob('EXECUTES_EVERY_SECOND')).not.toBeUndefined();
   });
 
   it(`should add dynamic cron job`, async () => {
@@ -57,7 +123,7 @@ describe('Cron', () => {
     job.start();
     expect(job.running).toEqual(true);
 
-    jest.runAllTimers();
+    clock.tick(3000);
     expect(service.dynamicCallsCount).toEqual(3);
   });
 
