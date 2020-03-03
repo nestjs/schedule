@@ -18,10 +18,10 @@
     "uuid": "3.4.0"
   },
   "devDependencies": {
-    "@nestjs/common": "6.11.9",
-    "@nestjs/core": "6.11.9",
-    "@nestjs/platform-express": "6.11.9",
-    "@nestjs/testing": "6.11.9",
+    "@nestjs/common": "6.11.10",
+    "@nestjs/core": "6.11.10",
+    "@nestjs/platform-express": "6.11.10",
+    "@nestjs/testing": "6.11.10",
     "@types/cron": "1.7.2",
     "@types/jest": "25.1.3",
     "@types/node": "7.10.8",
