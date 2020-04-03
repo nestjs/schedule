@@ -45,7 +45,7 @@
     "reflect-metadata": "0.1.13",
     "release-it": "13.5.1",
     "rimraf": "3.0.2",
-    "rxjs": "6.5.4",
+    "rxjs": "6.5.5",
     "sinon": "9.0.1",
     "ts-jest": "24.3.0",
     "typescript": "3.8.3"
