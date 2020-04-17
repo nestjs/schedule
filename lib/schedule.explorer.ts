@@ -23,7 +23,7 @@ export class ScheduleExplorer implements OnModuleInit {
     const providers: InstanceWrapper[] = this.discoveryService.getProviders();
     providers.forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
-      if (!instance) {
+      if (!instance || !Object.getPrototypeOf(instance)) {
         return;
       }
       this.metadataScanner.scanFromPrototype(
