@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { TimeoutService } from '../src/timeout.service';
+import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
 
 describe('Timeout', () => {
   let app: INestApplication;
@@ -72,6 +73,17 @@ describe('Timeout', () => {
         'No Timeout was found with the given name (dynamic). Check that you created one with a decorator or with the create API.',
       );
     }
+  });
+
+  it(`should initialize when the consuming module contains a provider with a null prototype`, async () => {
+    const module = await Test.createTestingModule({
+      imports: [AppModule.registerTimeout()],
+      providers: [nullPrototypeObjectProvider],
+    }).compile();
+    app = module.createNestApplication();
+
+    const instance = await app.init();
+    expect(instance).toBeDefined();
   });
 
   afterEach(async () => {

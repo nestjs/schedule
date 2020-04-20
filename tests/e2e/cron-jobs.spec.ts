@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
+import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
 import sinon from 'sinon';
 
 const deleteAllRegisteredJobsExceptOne = (
@@ -10,8 +11,8 @@ const deleteAllRegisteredJobsExceptOne = (
   name: string,
 ) => {
   Array.from(registry.getCronJobs().keys())
-    .filter(key => key !== name)
-    .forEach(item => registry.deleteCronJob(item));
+    .filter((key) => key !== name)
+    .forEach((item) => registry.deleteCronJob(item));
 };
 
 describe('Cron', () => {
@@ -145,6 +146,17 @@ describe('Cron', () => {
         'No Cron Job was found with the given name (dynamic). Check that you created one with a decorator or with the create API.',
       );
     }
+  });
+
+  it(`should initialize when the consuming module contains a provider with a null prototype`, async () => {
+    const module = await Test.createTestingModule({
+      imports: [AppModule.registerCron()],
+      providers: [nullPrototypeObjectProvider],
+    }).compile();
+    app = module.createNestApplication();
+
+    const instance = await app.init();
+    expect(instance).toBeDefined();
   });
 
   afterEach(async () => {
