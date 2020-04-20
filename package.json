@@ -18,7 +18,7 @@
     "release": "release-it"
   },
   "dependencies": {
-    "cron": "1.8.2",
+    "cron": "1.7.2",
     "uuid": "7.0.3"
   },
   "devDependencies": {
