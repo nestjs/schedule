@@ -34,7 +34,7 @@ export enum CronExpression {
   EVERY_DAY_AT_1PM = '0 13 * * *',
   EVERY_DAY_AT_2PM = '0 14 * * *',
   EVERY_DAY_AT_3PM = '0 15 * * *',
-  EVERY_DAY_AT_4PM = '0 15 * * *',
+  EVERY_DAY_AT_4PM = '0 16 * * *',
   EVERY_DAY_AT_5PM = '0 17 * * *',
   EVERY_DAY_AT_6PM = '0 18 * * *',
   EVERY_DAY_AT_7PM = '0 19 * * *',
