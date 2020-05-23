@@ -43,7 +43,7 @@ export class SchedulerOrchestrator
 
   mountIntervals() {
     const intervalKeys = Object.keys(this.intervals);
-    intervalKeys.forEach(key => {
+    intervalKeys.forEach((key) => {
       const options = this.intervals[key];
       const intervalRef = setInterval(options.target, options.timeout);
 
@@ -54,7 +54,7 @@ export class SchedulerOrchestrator
 
   mountTimeouts() {
     const timeoutKeys = Object.keys(this.timeouts);
-    timeoutKeys.forEach(key => {
+    timeoutKeys.forEach((key) => {
       const options = this.timeouts[key];
       const timeoutRef = setTimeout(options.target, options.timeout);
 
@@ -65,7 +65,7 @@ export class SchedulerOrchestrator
 
   mountCron() {
     const cronKeys = Object.keys(this.cronJobs);
-    cronKeys.forEach(key => {
+    cronKeys.forEach((key) => {
       const { options, target } = this.cronJobs[key];
       const cronJob = new CronJob(
         options.cronTime,
@@ -74,7 +74,7 @@ export class SchedulerOrchestrator
         false,
         options.timeZone,
         undefined,
-        false,
+        options.runOnInit ?? false,
         options.utcOffset,
         options.unrefTimeout,
       );
@@ -87,17 +87,17 @@ export class SchedulerOrchestrator
 
   clearTimeouts() {
     const keys = Object.keys(this.timeouts);
-    keys.forEach(key => clearTimeout(this.timeouts[key].ref));
+    keys.forEach((key) => clearTimeout(this.timeouts[key].ref));
   }
 
   clearIntervals() {
     const keys = Object.keys(this.intervals);
-    keys.forEach(key => clearInterval(this.intervals[key].ref));
+    keys.forEach((key) => clearInterval(this.intervals[key].ref));
   }
 
   closeCronJobs() {
     const keys = Object.keys(this.cronJobs);
-    keys.forEach(key => this.cronJobs[key].ref!.stop());
+    keys.forEach((key) => this.cronJobs[key].ref!.stop());
   }
 
   addTimeout(methodRef: Function, timeout: number, name: string = v4()) {
