@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "cron": "1.7.2",
-    "uuid": "8.1.0"
+    "uuid": "8.2.0"
   },
   "devDependencies": {
     "@commitlint/cli": "9.0.1",
