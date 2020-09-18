@@ -86,6 +86,19 @@ describe('Timeout', () => {
     expect(instance).toBeDefined();
   });
 
+  it('should clean up dynamic timeouts on application shutdown', async () => {
+    const service = app.get(TimeoutService);
+    await app.init();
+    service.addTimeout();
+
+    const registry = app.get(SchedulerRegistry);
+
+    await app.close();
+
+    expect(registry.getTimeouts().length).toBe(0);
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
   afterEach(async () => {
     await app.close();
   });

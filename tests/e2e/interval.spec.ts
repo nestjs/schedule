@@ -85,6 +85,19 @@ describe('Interval', () => {
     expect(instance).toBeDefined();
   });
 
+  it('should clean up dynamic intervals on application shutdown', async () => {
+    const service = app.get(IntervalService);
+    await app.init();
+    service.addInterval();
+
+    const registry = app.get(SchedulerRegistry);
+
+    await app.close();
+
+    expect(registry.getIntervals().length).toBe(0);
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
   afterEach(async () => {
     await app.close();
   });
