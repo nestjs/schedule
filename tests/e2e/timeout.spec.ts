@@ -2,8 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
-import { TimeoutService } from '../src/timeout.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
+import { TimeoutService } from '../src/timeout.service';
 
 describe('Timeout', () => {
   let app: INestApplication;
@@ -84,6 +84,18 @@ describe('Timeout', () => {
 
     const instance = await app.init();
     expect(instance).toBeDefined();
+  });
+
+  it('should clean up dynamic timeouts on application shutdown', async () => {
+    const service = app.get(TimeoutService);
+    await app.init();
+    service.addTimeout();
+
+    const registry = app.get(SchedulerRegistry);
+    await app.close();
+
+    expect(registry.getTimeouts().length).toBe(0);
+    expect(jest.getTimerCount()).toBe(0);
   });
 
   afterEach(async () => {

@@ -1,10 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import sinon from 'sinon';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
-import sinon from 'sinon';
 
 const deleteAllRegisteredJobsExceptOne = (
   registry: SchedulerRegistry,
@@ -157,6 +157,19 @@ describe('Cron', () => {
 
     const instance = await app.init();
     expect(instance).toBeDefined();
+  });
+
+  it('should clean up dynamic cron jobs on application shutdown', async () => {
+    const service = app.get(CronService);
+    await app.init();
+    service.addCronJob();
+
+    const registry = app.get(SchedulerRegistry);
+
+    await app.close();
+
+    expect(registry.getCronJobs().size).toBe(0);
+    expect(clock.countTimers()).toBe(0);
   });
 
   afterEach(async () => {
