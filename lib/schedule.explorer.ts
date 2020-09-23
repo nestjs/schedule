@@ -20,8 +20,11 @@ export class ScheduleExplorer implements OnModuleInit {
   }
 
   explore() {
-    const providers: InstanceWrapper[] = this.discoveryService.getProviders();
-    providers.forEach((wrapper: InstanceWrapper) => {
+    const instanceWrappers: InstanceWrapper[] = [
+      ...this.discoveryService.getControllers(),
+      ...this.discoveryService.getProviders(),
+    ];
+    instanceWrappers.forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
       if (!instance || !Object.getPrototypeOf(instance)) {
         return;
