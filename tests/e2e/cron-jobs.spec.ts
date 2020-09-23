@@ -1,10 +1,10 @@
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import sinon from 'sinon';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
-import sinon from 'sinon';
 
 const deleteAllRegisteredJobsExceptOne = (
   registry: SchedulerRegistry,

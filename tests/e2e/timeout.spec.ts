@@ -2,8 +2,8 @@ import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
-import { TimeoutService } from '../src/timeout.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
+import { TimeoutService } from '../src/timeout.service';
 
 describe('Timeout', () => {
   let app: INestApplication;
@@ -92,7 +92,6 @@ describe('Timeout', () => {
     service.addTimeout();
 
     const registry = app.get(SchedulerRegistry);
-
     await app.close();
 
     expect(registry.getTimeouts().length).toBe(0);
