@@ -159,6 +159,19 @@ describe('Cron', () => {
     expect(instance).toBeDefined();
   });
 
+  it('should clean up dynamic cron jobs on application shutdown', async () => {
+    const service = app.get(CronService);
+    await app.init();
+    service.addCronJob();
+
+    const registry = app.get(SchedulerRegistry);
+
+    await app.close();
+
+    expect(registry.getCronJobs().size).toBe(0);
+    expect(clock.countTimers()).toBe(0);
+  });
+
   afterEach(async () => {
     await app.close();
   });
