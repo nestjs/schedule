@@ -60,8 +60,12 @@ export class SchedulerRegistry {
     return this.cronJobs;
   }
 
+  hasCronJob(name: string): boolean {
+    return [...this.getCronJobs().keys()].includes(name);
+  }
+
   deleteCronJob(name: string) {
-    if ([...this.getCronJobs().keys()].includes(name)) {
+    if (this.hasCronJob(name)) {
       const cronJob = this.getCronJob(name);
       cronJob.stop();
       this.cronJobs.delete(name);
@@ -72,8 +76,12 @@ export class SchedulerRegistry {
     return [...this.intervals.keys()];
   }
 
+  hasInterval(name: string): boolean {
+    return this.getIntervals().includes(name);
+  }
+
   deleteInterval(name: string) {
-    if (this.getIntervals().includes(name)) {
+    if (this.hasInterval(name)) {
       const interval = this.getInterval(name);
       clearInterval(interval);
       this.intervals.delete(name);
@@ -84,8 +92,12 @@ export class SchedulerRegistry {
     return [...this.timeouts.keys()];
   }
 
+  hasTimeout(name: string): boolean {
+    return this.getTimeouts().includes(name);
+  }
+
   deleteTimeout(name: string) {
-    if (this.getTimeouts().includes(name)) {
+    if (this.hasTimeout(name)) {
       const timeout = this.getTimeout(name);
       clearTimeout(timeout);
       this.timeouts.delete(name);
