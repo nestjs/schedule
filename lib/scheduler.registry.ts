@@ -8,6 +8,19 @@ export class SchedulerRegistry {
   private readonly timeouts = new Map<string, any>();
   private readonly intervals = new Map<string, any>();
 
+  isExists(type: 'cron' | 'timeout' | 'interval', name: string) {
+    switch (type) {
+      case 'cron':
+        return this.cronJobs.has(name);
+      case 'interval':
+        return this.intervals.has(name);
+      case 'timeout':
+        return this.timeouts.has(name);
+      default:
+        return false;
+    }
+  }
+  
   getCronJob(name: string) {
     const ref = this.cronJobs.get(name);
     if (!ref) {
