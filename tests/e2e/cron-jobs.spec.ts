@@ -148,6 +148,20 @@ describe('Cron', () => {
     }
   });
 
+  it('should return true for dynamic cron job', async () => {
+    const service: CronService = app.get(CronService);
+    await app.init();
+
+    service.addCronJob();
+    expect(service.isExist('dynamic')).toEqual(true);
+  });
+
+  it('should return false for dynamic cron job', async () => {
+    const service: CronService = app.get(CronService);
+    await app.init();
+    expect(service.isExist('dynamic')).toEqual(false);
+  });
+
   it(`should initialize when the consuming module contains a provider with a null prototype`, async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule.registerCron()],

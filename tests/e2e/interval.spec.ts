@@ -85,6 +85,20 @@ describe('Interval', () => {
     expect(instance).toBeDefined();
   });
 
+  it('should return true for dynamic interval', async () => {
+    const service: IntervalService = app.get(IntervalService);
+    await app.init();
+
+    service.addInterval();
+    expect(service.isExist('dynamic')).toEqual(true);
+  });
+
+  it('should return false for dynamic interval', async () => {
+    const service: IntervalService = app.get(IntervalService);
+    await app.init();
+    expect(service.isExist('dynamic')).toEqual(false);
+  });
+
   it('should clean up dynamic intervals on application shutdown', async () => {
     const service = app.get(IntervalService);
     await app.init();

@@ -25,4 +25,8 @@ export class TimeoutService {
       (timeoutRef as unknown) as number,
     );
   }
+
+  isExist(name: string): boolean {
+    return this.schedulerRegistry.isExists('timeout', name);
+  }
 }

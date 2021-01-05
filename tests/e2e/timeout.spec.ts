@@ -75,6 +75,20 @@ describe('Timeout', () => {
     }
   });
 
+  it('should return true for dynamic timeout', async () => {
+    const service: TimeoutService = app.get(TimeoutService);
+    await app.init();
+
+    service.addTimeout();
+    expect(service.isExist('dynamic')).toEqual(true);
+  });
+
+  it('should return false for dynamic timeout', async () => {
+    const service: TimeoutService = app.get(TimeoutService);
+    await app.init();
+    expect(service.isExist('dynamic')).toEqual(false);
+  });
+
   it(`should initialize when the consuming module contains a provider with a null prototype`, async () => {
     const module = await Test.createTestingModule({
       imports: [AppModule.registerTimeout()],

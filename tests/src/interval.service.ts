@@ -26,4 +26,8 @@ export class IntervalService {
       (intervalRef as unknown) as number,
     );
   }
+
+  isExist(name: string) {
+    return this.schedulerRegistry.isExists('interval', name);
+  }
 }

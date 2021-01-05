@@ -68,4 +68,8 @@ export class CronService {
     this.schedulerRegistry.addCronJob('dynamic', job);
     return job;
   }
+
+  isExist(name: string): boolean {
+    return this.schedulerRegistry.isExists('cron', name);
+  }
 }
