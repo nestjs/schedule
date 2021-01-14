@@ -98,6 +98,20 @@ describe('Timeout', () => {
     expect(jest.getTimerCount()).toBe(0);
   });
 
+  it('should return true for dynamic timeout', async () => {
+    const service: TimeoutService = app.get(TimeoutService);
+    await app.init();
+
+    service.addTimeout();
+    expect(service.doesExists('dynamic')).toEqual(true);
+  });
+
+  it('should return false for dynamic timeout', async () => {
+    const service: TimeoutService = app.get(TimeoutService);
+    await app.init();
+    expect(service.doesExists('dynamic')).toEqual(false);
+  });
+
   afterEach(async () => {
     await app.close();
   });
