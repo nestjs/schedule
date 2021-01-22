@@ -172,6 +172,20 @@ describe('Cron', () => {
     expect(clock.countTimers()).toBe(0);
   });
 
+  it('should return true for dynamic cron job', async () => {
+    const service: CronService = app.get(CronService);
+    await app.init();
+
+    service.addCronJob();
+    expect(service.doesExists('dynamic')).toEqual(true);
+  });
+
+  it('should return false for dynamic cron job', async () => {
+    const service: CronService = app.get(CronService);
+    await app.init();
+    expect(service.doesExists('dynamic')).toEqual(false);
+  });
+
   afterEach(async () => {
     await app.close();
   });

@@ -98,6 +98,20 @@ describe('Interval', () => {
     expect(jest.getTimerCount()).toBe(0);
   });
 
+  it('should return true for dynamic interval', async () => {
+    const service: IntervalService = app.get(IntervalService);
+    await app.init();
+
+    service.addInterval();
+    expect(service.doesExists('dynamic')).toEqual(true);
+  });
+
+  it('should return false for dynamic interval', async () => {
+    const service: IntervalService = app.get(IntervalService);
+    await app.init();
+    expect(service.doesExists('dynamic')).toEqual(false);
+  });
+
   afterEach(async () => {
     await app.close();
   });
