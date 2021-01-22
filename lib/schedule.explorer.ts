@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { MetadataScanner } from '@nestjs/core/metadata-scanner';
@@ -8,6 +8,8 @@ import { SchedulerOrchestrator } from './scheduler.orchestrator';
 
 @Injectable()
 export class ScheduleExplorer implements OnModuleInit {
+  private readonly logger = new Logger('Scheduler');
+
   constructor(
     private readonly schedulerOrchestrator: SchedulerOrchestrator,
     private readonly discoveryService: DiscoveryService,
@@ -44,18 +46,22 @@ export class ScheduleExplorer implements OnModuleInit {
     switch (metadata) {
       case SchedulerType.CRON: {
         const cronMetadata = this.metadataAccessor.getCronMetadata(methodRef);
-        return this.schedulerOrchestrator.addCron(
-          methodRef.bind(instance),
-          cronMetadata!,
-        );
+        const cronFn = this.wrapFunctionInTryCatchBlocks(methodRef, instance);
+
+        return this.schedulerOrchestrator.addCron(cronFn, cronMetadata!);
       }
       case SchedulerType.TIMEOUT: {
         const timeoutMetadata = this.metadataAccessor.getTimeoutMetadata(
           methodRef,
         );
         const name = this.metadataAccessor.getSchedulerName(methodRef);
+        const timeoutFn = this.wrapFunctionInTryCatchBlocks(
+          methodRef,
+          instance,
+        );
+
         return this.schedulerOrchestrator.addTimeout(
-          methodRef.bind(instance),
+          timeoutFn,
           timeoutMetadata!.timeout,
           name,
         );
@@ -65,12 +71,27 @@ export class ScheduleExplorer implements OnModuleInit {
           methodRef,
         );
         const name = this.metadataAccessor.getSchedulerName(methodRef);
+        const intervalFn = this.wrapFunctionInTryCatchBlocks(
+          methodRef,
+          instance,
+        );
+
         return this.schedulerOrchestrator.addInterval(
-          methodRef.bind(instance),
+          intervalFn,
           intervalMetadata!.timeout,
           name,
         );
       }
     }
+  }
+
+  private wrapFunctionInTryCatchBlocks(methodRef: Function, instance: object) {
+    return async (...args: unknown[]) => {
+      try {
+        await methodRef.call(instance, ...args);
+      } catch (error) {
+        this.logger.error(error);
+      }
+    };
   }
 }
