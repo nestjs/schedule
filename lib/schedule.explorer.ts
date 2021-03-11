@@ -26,17 +26,19 @@ export class ScheduleExplorer implements OnModuleInit {
       ...this.discoveryService.getControllers(),
       ...this.discoveryService.getProviders(),
     ];
-    instanceWrappers.forEach((wrapper: InstanceWrapper) => {
-      const { instance } = wrapper;
-      if (!instance || !Object.getPrototypeOf(instance)) {
-        return;
-      }
-      this.metadataScanner.scanFromPrototype(
-        instance,
-        Object.getPrototypeOf(instance),
-        (key: string) => this.lookupSchedulers(instance, key),
-      );
-    });
+    instanceWrappers
+      .filter((wrapper) => wrapper.isDependencyTreeStatic())
+      .forEach((wrapper: InstanceWrapper) => {
+        const { instance } = wrapper;
+        if (!instance || !Object.getPrototypeOf(instance)) {
+          return;
+        }
+        this.metadataScanner.scanFromPrototype(
+          instance,
+          Object.getPrototypeOf(instance),
+          (key: string) => this.lookupSchedulers(instance, key),
+        );
+      });
   }
 
   lookupSchedulers(instance: Record<string, Function>, key: string) {
