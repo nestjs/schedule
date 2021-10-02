@@ -12,7 +12,8 @@
     "sourceMap": false,
     "outDir": "./dist",
     "rootDir": "./lib",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "useUnknownInCatchVariables": false
   },
   "include": ["lib/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts", "tests"]
