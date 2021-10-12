@@ -8,7 +8,7 @@ export class SchedulerRegistry {
   private readonly timeouts = new Map<string, any>();
   private readonly intervals = new Map<string, any>();
 
-  doesExists(type: 'cron' | 'timeout' | 'interval', name: string) {
+  doesExist(type: 'cron' | 'timeout' | 'interval', name: string) {
     switch (type) {
       case 'cron':
         return this.cronJobs.has(name);

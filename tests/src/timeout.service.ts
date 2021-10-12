@@ -22,11 +22,11 @@ export class TimeoutService {
 
     this.schedulerRegistry.addTimeout(
       'dynamic',
-      (timeoutRef as unknown) as number,
+      timeoutRef as unknown as number,
     );
   }
 
-  doesExists(name: string): boolean {
-    return this.schedulerRegistry.doesExists('timeout', name);
+  doesExist(name: string): boolean {
+    return this.schedulerRegistry.doesExist('timeout', name);
   }
 }

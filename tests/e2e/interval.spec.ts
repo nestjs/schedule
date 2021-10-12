@@ -103,13 +103,13 @@ describe('Interval', () => {
     await app.init();
 
     service.addInterval();
-    expect(service.doesExists('dynamic')).toEqual(true);
+    expect(service.doesExist('dynamic')).toEqual(true);
   });
 
   it('should return false for dynamic interval', async () => {
     const service: IntervalService = app.get(IntervalService);
     await app.init();
-    expect(service.doesExists('dynamic')).toEqual(false);
+    expect(service.doesExist('dynamic')).toEqual(false);
   });
 
   afterEach(async () => {

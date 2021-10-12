@@ -23,11 +23,11 @@ export class IntervalService {
 
     this.schedulerRegistry.addInterval(
       'dynamic',
-      (intervalRef as unknown) as number,
+      intervalRef as unknown as number,
     );
   }
 
-  doesExists(name: string): boolean {
-    return this.schedulerRegistry.doesExists('interval', name);
+  doesExist(name: string): boolean {
+    return this.schedulerRegistry.doesExist('interval', name);
   }
 }
