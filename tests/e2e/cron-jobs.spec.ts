@@ -1,9 +1,10 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import sinon from 'sinon';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
+import { RequestScopedCronService } from '../src/request-scoped-cron.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
 
 const deleteAllRegisteredJobsExceptOne = (
@@ -184,6 +185,57 @@ describe('Cron', () => {
     const service: CronService = app.get(CronService);
     await app.init();
     expect(service.doesExists('dynamic')).toEqual(false);
+  });
+
+  it(`should not log a warning when the provider is not request scoped`, async () => {
+    const logger = {
+      log: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    };
+    Logger.overrideLogger(logger);
+    jest.spyOn(logger, 'warn');
+
+    await app.init();
+
+    expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+
+describe('Cron - Request Scoped Provider', () => {
+  let app: INestApplication;
+  let clock: sinon.SinonFakeTimers;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      imports: [AppModule.registerRequestScopedCron()],
+    }).compile();
+
+    app = module.createNestApplication();
+    clock = sinon.useFakeTimers({ now: 1577836800000 }); // 2020-01-01T00:00:00.000Z
+  });
+
+  it(`should log a warning when trying to register a cron in a request scoped provider`, async () => {
+    const logger = {
+      log: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    };
+    Logger.overrideLogger(logger);
+    jest.spyOn(logger, 'warn');
+
+    await app.init();
+    const registry = app.get(SchedulerRegistry);
+
+    expect(registry.getCronJobs()).toEqual(new Map());
+    expect(logger.warn).toHaveBeenCalledWith(
+      'Cannot register cron job "RequestScopedCronService@handleCron" because it is defined in a non static provider.',
+      'Scheduler',
+    );
   });
 
   afterEach(async () => {

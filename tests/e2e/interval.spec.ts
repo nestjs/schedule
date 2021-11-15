@@ -1,9 +1,10 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { IntervalService } from '../src/interval.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
+import { RequestScopedIntervalService } from '../src/request-scoped-interval.service';
 
 describe('Interval', () => {
   let app: INestApplication;
@@ -110,6 +111,56 @@ describe('Interval', () => {
     const service: IntervalService = app.get(IntervalService);
     await app.init();
     expect(service.doesExists('dynamic')).toEqual(false);
+  });
+
+  it(`should not log a warning when the provider is not request scoped`, async () => {
+    const logger = {
+      log: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    };
+    Logger.overrideLogger(logger);
+    jest.spyOn(logger, 'warn');
+
+    await app.init();
+
+    expect(logger.warn).not.toHaveBeenCalledWith();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+
+describe('Interval - Request Scoped', () => {
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      imports: [AppModule.registerRequestScopedInterval()],
+    }).compile();
+
+    app = module.createNestApplication();
+    jest.useFakeTimers();
+  });
+
+  it(`should log a warning when trying to register an interval in a request scoped provider`, async () => {
+    const logger = {
+      log: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    };
+    Logger.overrideLogger(logger);
+    jest.spyOn(logger, 'warn');
+
+    await app.init();
+    const registry = app.get(SchedulerRegistry);
+
+    expect(registry.getIntervals()).toEqual([]);
+    expect(logger.warn).toHaveBeenCalledWith(
+      'Cannot register interval "RequestScopedIntervalService@handleInterval" because it is defined in a non static provider.',
+      'Scheduler',
+    );
   });
 
   afterEach(async () => {

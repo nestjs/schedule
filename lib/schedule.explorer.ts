@@ -26,19 +26,20 @@ export class ScheduleExplorer implements OnModuleInit {
       ...this.discoveryService.getControllers(),
       ...this.discoveryService.getProviders(),
     ];
-    instanceWrappers
-      .filter((wrapper) => wrapper.isDependencyTreeStatic())
-      .forEach((wrapper: InstanceWrapper) => {
-        const { instance } = wrapper;
-        if (!instance || !Object.getPrototypeOf(instance)) {
-          return;
-        }
-        this.metadataScanner.scanFromPrototype(
-          instance,
-          Object.getPrototypeOf(instance),
-          (key: string) => this.lookupSchedulers(instance, key),
-        );
-      });
+    instanceWrappers.forEach((wrapper: InstanceWrapper) => {
+      const { instance } = wrapper;
+      if (!instance || !Object.getPrototypeOf(instance)) {
+        return;
+      }
+      this.metadataScanner.scanFromPrototype(
+        instance,
+        Object.getPrototypeOf(instance),
+        (key: string) =>
+          wrapper.isDependencyTreeStatic()
+            ? this.lookupSchedulers(instance, key)
+            : this.warnForNonStaticProviders(wrapper, instance, key),
+      );
+    });
   }
 
   lookupSchedulers(instance: Record<string, Function>, key: string) {
@@ -83,6 +84,36 @@ export class ScheduleExplorer implements OnModuleInit {
           intervalMetadata!.timeout,
           name,
         );
+      }
+    }
+  }
+
+  warnForNonStaticProviders(
+    wrapper: InstanceWrapper<any>,
+    instance: Record<string, Function>,
+    key: string,
+  ) {
+    const methodRef = instance[key];
+    const metadata = this.metadataAccessor.getSchedulerType(methodRef);
+
+    switch (metadata) {
+      case SchedulerType.CRON: {
+        this.logger.warn(
+          `Cannot register cron job "${wrapper.name}@${key}" because it is defined in a non static provider.`,
+        );
+        break;
+      }
+      case SchedulerType.TIMEOUT: {
+        this.logger.warn(
+          `Cannot register timeout "${wrapper.name}@${key}" because it is defined in a non static provider.`,
+        );
+        break;
+      }
+      case SchedulerType.INTERVAL: {
+        this.logger.warn(
+          `Cannot register interval "${wrapper.name}@${key}" because it is defined in a non static provider.`,
+        );
+        break;
       }
     }
   }
