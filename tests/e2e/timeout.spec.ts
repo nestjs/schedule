@@ -1,8 +1,9 @@
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
+import { RequestScopedTimeoutService } from '../src/request-scoped-timeout.service';
 import { TimeoutService } from '../src/timeout.service';
 
 describe('Timeout', () => {
@@ -110,6 +111,56 @@ describe('Timeout', () => {
     const service: TimeoutService = app.get(TimeoutService);
     await app.init();
     expect(service.doesExists('dynamic')).toEqual(false);
+  });
+
+  it(`should not log a warning when the provider is not request scoped`, async () => {
+    const logger = {
+      log: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    };
+    Logger.overrideLogger(logger);
+    jest.spyOn(logger, 'warn');
+
+    await app.init();
+
+    expect(logger.warn).not.toHaveBeenCalledWith();
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+});
+
+describe('Timeout - Request Scoped', () => {
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      imports: [AppModule.registerRequestScopedTimeout()],
+    }).compile();
+
+    app = module.createNestApplication();
+    jest.useFakeTimers();
+  });
+
+  it(`should log a warning when trying to register an timeout in a request scoped provider`, async () => {
+    const logger = {
+      log: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+    };
+    Logger.overrideLogger(logger);
+    jest.spyOn(logger, 'warn');
+
+    await app.init();
+    const registry = app.get(SchedulerRegistry);
+
+    expect(registry.getTimeouts()).toEqual([]);
+    expect(logger.warn).toHaveBeenCalledWith(
+      'Cannot register timeout "RequestScopedTimeoutService@handleTimeout" because it is defined in a non static provider.',
+      'Scheduler',
+    );
   });
 
   afterEach(async () => {
