@@ -22,7 +22,7 @@ export class TimeoutService {
 
     this.schedulerRegistry.addTimeout(
       'dynamic',
-      (timeoutRef as unknown) as number,
+      timeoutRef as unknown as number,
     );
   }
 
