@@ -23,7 +23,7 @@ export class IntervalService {
 
     this.schedulerRegistry.addInterval(
       'dynamic',
-      (intervalRef as unknown) as number,
+      intervalRef as unknown as number,
     );
   }
 
