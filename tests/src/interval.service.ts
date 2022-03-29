@@ -27,7 +27,7 @@ export class IntervalService {
     );
   }
 
-  doesExists(name: string): boolean {
-    return this.schedulerRegistry.doesExists('interval', name);
+  doesExist(name: string): boolean {
+    return this.schedulerRegistry.doesExist('interval', name);
   }
 }

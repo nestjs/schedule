@@ -104,13 +104,13 @@ describe('Timeout', () => {
     await app.init();
 
     service.addTimeout();
-    expect(service.doesExists('dynamic')).toEqual(true);
+    expect(service.doesExist('dynamic')).toEqual(true);
   });
 
   it('should return false for dynamic timeout', async () => {
     const service: TimeoutService = app.get(TimeoutService);
     await app.init();
-    expect(service.doesExists('dynamic')).toEqual(false);
+    expect(service.doesExist('dynamic')).toEqual(false);
   });
 
   it(`should not log a warning when the provider is not request scoped`, async () => {

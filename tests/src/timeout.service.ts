@@ -26,7 +26,7 @@ export class TimeoutService {
     );
   }
 
-  doesExists(name: string): boolean {
-    return this.schedulerRegistry.doesExists('timeout', name);
+  doesExist(name: string): boolean {
+    return this.schedulerRegistry.doesExist('timeout', name);
   }
 }

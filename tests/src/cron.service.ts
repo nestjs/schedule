@@ -69,7 +69,7 @@ export class CronService {
     return job;
   }
 
-  doesExists(name: string): boolean {
-    return this.schedulerRegistry.doesExists('cron', name);
+  doesExist(name: string): boolean {
+    return this.schedulerRegistry.doesExist('cron', name);
   }
 }
