@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /><a>
 </p>
 
 [travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
@@ -31,7 +31,8 @@ Schedule module for [Nest](https://github.com/nestjs/nest) based on the [cron](h
 ## Installation
 
 ```bash
-$ npm i --save @nestjs/schedule
+$ npm install --save @nestjs/schedule
+$ npm install --save-dev @types/cron
 ```
 
 ## Quick Start
