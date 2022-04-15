@@ -86,13 +86,13 @@ export class SchedulerOrchestrator
   }
 
   clearTimeouts() {
-    Array.from(this.schedulerRegistry.getTimeouts()).forEach((key) =>
+    this.schedulerRegistry.getTimeouts().forEach((key) =>
       this.schedulerRegistry.deleteTimeout(key),
     );
   }
 
   clearIntervals() {
-    Array.from(this.schedulerRegistry.getIntervals()).forEach((key) =>
+    this.schedulerRegistry.getIntervals().forEach((key) =>
       this.schedulerRegistry.deleteInterval(key),
     );
   }
