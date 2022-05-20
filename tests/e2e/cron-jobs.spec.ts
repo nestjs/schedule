@@ -4,7 +4,6 @@ import sinon from 'sinon';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
-import { RequestScopedCronService } from '../src/request-scoped-cron.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
 
 const deleteAllRegisteredJobsExceptOne = (
@@ -202,6 +201,7 @@ describe('Cron', () => {
   });
 
   afterEach(async () => {
+    clock.restore();
     await app.close();
   });
 });
@@ -239,6 +239,7 @@ describe('Cron - Request Scoped Provider', () => {
   });
 
   afterEach(async () => {
+    clock.restore();
     await app.close();
   });
 });
