@@ -6,6 +6,8 @@ import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
 
+const REMOVE_ANSI_CHARACTERS = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g
+
 const deleteAllRegisteredJobsExceptOne = (
   registry: SchedulerRegistry,
   name: string,
@@ -37,6 +39,18 @@ describe('Cron', () => {
     clock.tick(3000);
 
     expect(service.callsCount).toEqual(3);
+  });
+
+  it('should catch and log exception with class name as context', async () => {
+    const spy = sinon.spy(process.stderr, 'write');
+    
+    await app.init();
+    
+    clock.tick('01:00');
+
+    const lineLogged = String(spy.args[0][0]).replace(REMOVE_ANSI_CHARACTERS, '');
+    
+    expect(lineLogged).toContain('[CronService] Error: Cron Exception');
   });
 
   it(`should run "cron" once after 30 seconds`, async () => {

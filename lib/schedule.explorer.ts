@@ -122,7 +122,7 @@ export class ScheduleExplorer implements OnModuleInit {
       try {
         await methodRef.call(instance, ...args);
       } catch (error) {
-        this.logger.error(error);
+        Logger.error(error, instance.constructor.name);
       }
     };
   }

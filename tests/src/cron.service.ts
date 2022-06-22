@@ -46,6 +46,13 @@ export class CronService {
     }
   }
 
+  @Cron(CronExpression.EVERY_MINUTE, {
+    name: 'THROW_EXCEPTION_EVERY_MINUTE',
+  })
+  handleCronThrowException() {
+    throw new Error('Cron Exception')
+  }
+
   @Cron(CronExpression.EVERY_HOUR, {
     name: 'EXECUTES_EVERY_HOUR',
   })
