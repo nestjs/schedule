@@ -5,6 +5,8 @@ import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
+import { CronJob } from "cron";
+import { CronExpression } from "../../lib";
 
 const deleteAllRegisteredJobsExceptOne = (
   registry: SchedulerRegistry,
@@ -37,6 +39,19 @@ describe('Cron', () => {
     clock.tick(3000);
 
     expect(service.callsCount).toEqual(3);
+  });
+
+  it(`should catch and log exception inside cron-function added by scheduler`, async() => {
+    await app.init();
+    const registry = app.get(SchedulerRegistry);
+    registry['logger'].error = jest.fn();
+    const job = new CronJob(CronExpression.EVERY_SECOND, () => {
+      throw new Error('ERROR IN CRONJOB GOT CATCHED');
+    });
+    registry.addCronJob('THROWS_EXCEPTION_INSIDE', job);
+    job.start();
+    clock.tick('1');
+    expect(registry['logger'].error).toHaveBeenCalledWith(new Error('ERROR IN CRONJOB GOT CATCHED'));
   });
 
   it(`should run "cron" once after 30 seconds`, async () => {
