@@ -31,7 +31,8 @@ export interface CronOptions {
   unrefTimeout?: boolean;
 
   /**
-   * This flag indicates whether the job will be executed at all (true by default).
+   * This flag indicates whether the job will be executed at all.
+   * @default true
    */
   disabled?: boolean;
 }
