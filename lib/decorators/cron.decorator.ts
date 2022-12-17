@@ -32,7 +32,7 @@ export interface CronOptions {
 
   /**
    * This flag indicates whether the job will be executed at all.
-   * @default true
+   * @default false
    */
   disabled?: boolean;
 }
