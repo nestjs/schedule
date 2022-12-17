@@ -57,6 +57,12 @@ export class CronService {
     }
   }
 
+  @Cron(CronExpression.EVERY_30_SECONDS, {
+    name: 'DISABLED',
+    disabled: true,
+  })
+  handleDisabledCron() {}
+
   addCronJob(): CronJob {
     const job = new CronJob(CronExpression.EVERY_SECOND, () => {
       ++this.dynamicCallsCount;
