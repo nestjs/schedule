@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "cron": "2.0.0",
-    "uuid": "8.3.2"
+    "uuid": "9.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "17.4.2",
@@ -32,7 +32,7 @@
     "@types/jest": "29.4.0",
     "@types/node": "18.11.18",
     "@types/sinon": "10.0.13",
-    "@types/uuid": "8.3.4",
+    "@types/uuid": "9.0.0",
     "@typescript-eslint/eslint-plugin": "5.50.0",
     "@typescript-eslint/parser": "5.50.0",
     "eslint": "8.33.0",
