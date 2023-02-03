@@ -94,6 +94,17 @@ describe('Cron', () => {
     expect(job.running).toBeFalsy();
   });
 
+  it(`should not run "cron" at all`, async () => {
+    const service = app.get(CronService);
+
+    await app.init();
+    const registry = app.get(SchedulerRegistry);
+
+    expect(() => {
+      registry.getCronJob('DISABLED');
+    }).toThrow();
+  });
+
   it(`should return cron id by name`, async () => {
     await app.init();
     const registry = app.get(SchedulerRegistry);

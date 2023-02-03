@@ -67,6 +67,11 @@ export class SchedulerOrchestrator
     const cronKeys = Object.keys(this.cronJobs);
     cronKeys.forEach((key) => {
       const { options, target } = this.cronJobs[key];
+
+      if (options.disabled) {
+        return;
+      }
+
       const cronJob = new CronJob(
         options.cronTime,
         target as any,
