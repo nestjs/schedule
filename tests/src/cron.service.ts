@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '../../lib/decorators';
 import { CronExpression } from '../../lib/enums';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
-import { CronJob } from 'cron';
+import { Cron as CronJob } from 'croner';
 
 @Injectable()
 export class CronService {
@@ -64,13 +64,17 @@ export class CronService {
   handleDisabledCron() {}
 
   addCronJob(): CronJob {
-    const job = new CronJob(CronExpression.EVERY_SECOND, () => {
-      ++this.dynamicCallsCount;
-      if (this.dynamicCallsCount > 2) {
-        const ref = this.schedulerRegistry.getCronJob('dynamic');
-        ref!.stop();
-      }
-    });
+    const job = CronJob(
+      CronExpression.EVERY_SECOND,
+      { catch: true, paused: true },
+      () => {
+        ++this.dynamicCallsCount;
+        if (this.dynamicCallsCount > 2) {
+          const ref = this.schedulerRegistry.getCronJob('dynamic');
+          ref!.stop();
+        }
+      },
+    );
     this.schedulerRegistry.addCronJob('dynamic', job);
     return job;
   }

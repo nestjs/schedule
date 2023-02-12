@@ -2,8 +2,9 @@ import {
   Injectable,
   OnApplicationBootstrap,
   OnApplicationShutdown,
+  Logger
 } from '@nestjs/common';
-import { CronJob } from 'cron';
+import { Cron as CronJob } from 'croner';
 import { v4 } from 'uuid';
 import { CronOptions } from './decorators/cron.decorator';
 import { SchedulerRegistry } from './scheduler.registry';
@@ -26,6 +27,8 @@ export class SchedulerOrchestrator
   private readonly cronJobs: Record<string, CronJobOptions> = {};
   private readonly timeouts: Record<string, TimeoutOptions> = {};
   private readonly intervals: Record<string, IntervalOptions> = {};
+
+  private readonly logger = new Logger(SchedulerRegistry.name);
 
   constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 
@@ -67,23 +70,24 @@ export class SchedulerOrchestrator
     const cronKeys = Object.keys(this.cronJobs);
     cronKeys.forEach((key) => {
       const { options, target } = this.cronJobs[key];
-      const cronJob = new CronJob(
+      const cronJob = CronJob(
         options.cronTime,
-        target as any,
-        undefined,
-        false,
-        options.timeZone,
-        undefined,
-        false,
-        options.utcOffset,
-        options.unrefTimeout,
+        {
+          timezone: options.timeZone,
+          unref: options.unrefTimeout,
+          utcOffset: options.utcOffset,
+          context: options.context,
+          interval: options.interval,
+          protect: options.preventOverrun,
+          maxRuns: options.maxRuns,
+          legacyMode: options.legacyMode,
+          paused: options.disabled,
+          catch: async (error) => {
+            this.logger.error(error)
+          }
+        },
+        target as any
       );
-  
-      if (options.disabled) {
-        cronJob.stop();
-      } else {
-        cronJob.start();
-      }
 
       this.cronJobs[key].ref = cronJob;
       this.schedulerRegistry.addCronJob(key, cronJob);
