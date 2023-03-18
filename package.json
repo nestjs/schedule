@@ -29,7 +29,7 @@
     "@nestjs/platform-express": "9.3.10",
     "@nestjs/testing": "9.3.10",
     "@types/cron": "2.0.0",
-    "@types/jest": "29.4.4",
+    "@types/jest": "29.5.0",
     "@types/node": "18.15.3",
     "@types/sinon": "10.0.13",
     "@types/uuid": "9.0.1",
