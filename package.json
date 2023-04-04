@@ -18,7 +18,7 @@
     "release": "release-it"
   },
   "dependencies": {
-    "cron": "2.2.0",
+    "cron": "2.3.0",
     "uuid": "9.0.0"
   },
   "devDependencies": {
@@ -28,7 +28,7 @@
     "@nestjs/core": "9.3.12",
     "@nestjs/platform-express": "9.3.12",
     "@nestjs/testing": "9.3.12",
-    "@types/cron": "2.0.0",
+    "@types/cron": "2.0.1",
     "@types/jest": "29.5.0",
     "@types/node": "18.15.11",
     "@types/sinon": "10.0.13",
