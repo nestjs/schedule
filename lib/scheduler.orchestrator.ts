@@ -81,8 +81,7 @@ export class SchedulerOrchestrator
   
       if (options.disabled) {
         cronJob.stop();
-      }
-      else {
+      } else {
         cronJob.start();
       }
 
