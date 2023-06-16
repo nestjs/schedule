@@ -10,11 +10,6 @@ export class SchedulerRegistry {
   private readonly timeouts = new Map<string, any>();
   private readonly intervals = new Map<string, any>();
 
-  /**
-   * @deprecated Use the `doesExist` method instead.
-   */
-  // TODO(v2): drop this.
-  doesExists = this.doesExist;
   doesExist(type: 'cron' | 'timeout' | 'interval', name: string) {
     switch (type) {
       case 'cron':
