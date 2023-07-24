@@ -28,7 +28,6 @@
     "@nestjs/core": "10.1.1",
     "@nestjs/platform-express": "10.1.1",
     "@nestjs/testing": "10.1.1",
-    "@types/cron": "2.0.1",
     "@types/jest": "29.5.3",
     "@types/node": "18.17.0",
     "@types/sinon": "10.0.15",
