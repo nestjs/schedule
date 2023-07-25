@@ -30,7 +30,7 @@
     "@nestjs/testing": "10.1.2",
     "@types/cron": "2.0.1",
     "@types/jest": "29.5.3",
-    "@types/node": "18.17.0",
+    "@types/node": "18.17.1",
     "@types/sinon": "10.0.15",
     "@types/uuid": "9.0.2",
     "@typescript-eslint/eslint-plugin": "6.2.0",
