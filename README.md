@@ -30,7 +30,6 @@ Schedule module for [Nest](https://github.com/nestjs/nest) based on the [cron](h
 
 ```bash
 $ npm install --save @nestjs/schedule
-$ npm install --save-dev @types/cron
 ```
 
 ## Quick Start
