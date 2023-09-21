@@ -17,24 +17,33 @@ export class SchedulerMetadataAccessor {
   constructor(private readonly reflector: Reflector) {}
 
   getSchedulerType(target: Function): SchedulerType | undefined {
-    return this.reflector.get(SCHEDULER_TYPE, target);
+    return this.getMetadata(SCHEDULER_TYPE, target);
   }
 
   getSchedulerName(target: Function): string | undefined {
-    return this.reflector.get(SCHEDULER_NAME, target);
+    return this.getMetadata(SCHEDULER_NAME, target);
   }
 
   getTimeoutMetadata(target: Function): TimeoutMetadata | undefined {
-    return this.reflector.get(SCHEDULE_TIMEOUT_OPTIONS, target);
+    return this.getMetadata(SCHEDULE_TIMEOUT_OPTIONS, target);
   }
 
   getIntervalMetadata(target: Function): IntervalMetadata | undefined {
-    return this.reflector.get(SCHEDULE_INTERVAL_OPTIONS, target);
+    return this.getMetadata(SCHEDULE_INTERVAL_OPTIONS, target);
   }
 
   getCronMetadata(
     target: Function,
   ): (CronOptions & Record<'cronTime', string | Date | any>) | undefined {
-    return this.reflector.get(SCHEDULE_CRON_OPTIONS, target);
+    return this.getMetadata(SCHEDULE_CRON_OPTIONS, target);
+  }
+
+  private getMetadata<T>(key: string, target: Function): T | undefined {
+    const isObject =
+      typeof target === 'object'
+        ? target !== null
+        : typeof target === 'function';
+
+    return isObject ? this.reflector.get(key, target) : undefined;
   }
 }
