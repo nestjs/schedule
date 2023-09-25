@@ -18,7 +18,7 @@
     "release": "release-it"
   },
   "dependencies": {
-    "cron": "2.4.3",
+    "cron": "2.4.4",
     "uuid": "9.0.1"
   },
   "devDependencies": {
