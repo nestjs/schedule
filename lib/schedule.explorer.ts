@@ -27,17 +27,30 @@ export class ScheduleExplorer implements OnModuleInit {
     ];
     instanceWrappers.forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
+            
       if (!instance || !Object.getPrototypeOf(instance)) {
         return;
       }
-      this.metadataScanner.scanFromPrototype(
-        instance,
-        Object.getPrototypeOf(instance),
-        (key: string) =>
-          wrapper.isDependencyTreeStatic()
-            ? this.lookupSchedulers(instance, key)
-            : this.warnForNonStaticProviders(wrapper, instance, key),
-      );
+
+      const processMethod = (name: string) => 
+        wrapper.isDependencyTreeStatic()
+          ? this.lookupSchedulers(instance, name)
+          : this.warnForNonStaticProviders(wrapper, instance, name);
+      
+      // TODO(v4): remove this after dropping support for nestjs v9.3.2
+      if (!Reflect.has(this.metadataScanner, 'getAllMethodNames')) {
+        this.metadataScanner.scanFromPrototype(
+          instance,
+          Object.getPrototypeOf(instance),
+          processMethod,
+        );
+
+        return;
+      }
+
+      this.metadataScanner
+        .getAllMethodNames(Object.getPrototypeOf(instance))
+        .forEach(processMethod);
     });
   }
 
