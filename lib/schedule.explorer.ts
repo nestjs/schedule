@@ -27,16 +27,17 @@ export class ScheduleExplorer implements OnModuleInit {
     ];
     instanceWrappers.forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
+            
       if (!instance || !Object.getPrototypeOf(instance)) {
         return;
       }
-      this.metadataScanner.scanFromPrototype(
-        instance,
-        Object.getPrototypeOf(instance),
-        (key: string) =>
-          wrapper.isDependencyTreeStatic()
-            ? this.lookupSchedulers(instance, key)
-            : this.warnForNonStaticProviders(wrapper, instance, key),
+
+      this.metadataScanner.getAllMethodNames(
+        Object.getPrototypeOf(instance)
+      ).forEach(
+        (key: string) => wrapper.isDependencyTreeStatic()
+          ? this.lookupSchedulers(instance, key)
+          : this.warnForNonStaticProviders(wrapper, instance, key),
       );
     });
   }
