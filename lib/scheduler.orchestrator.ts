@@ -3,7 +3,7 @@ import {
   OnApplicationBootstrap,
   OnApplicationShutdown,
 } from '@nestjs/common';
-import { CronJob } from 'cron';
+import { CronCallback, CronJob, CronJobParams } from 'cron';
 import { v4 } from 'uuid';
 import { CronOptions } from './decorators/cron.decorator';
 import { SchedulerRegistry } from './scheduler.registry';
@@ -13,7 +13,7 @@ type TimeoutHost = { timeout: number };
 type RefHost<T> = { ref?: T };
 
 type CronOptionsHost = {
-  options: CronOptions & Record<'cronTime', string | Date | any>;
+  options: CronOptions & Record<'cronTime', CronJobParams['cronTime']>;
 };
 
 type IntervalOptions = TargetHost & TimeoutHost & RefHost<number>;
@@ -67,23 +67,11 @@ export class SchedulerOrchestrator
     const cronKeys = Object.keys(this.cronJobs);
     cronKeys.forEach((key) => {
       const { options, target } = this.cronJobs[key];
-      const cronJob = new CronJob(
-        options.cronTime,
-        target as any,
-        undefined,
-        false,
-        options.timeZone,
-        undefined,
-        false,
-        options.utcOffset,
-        options.unrefTimeout,
-      );
-  
-      if (options.disabled) {
-        cronJob.stop();
-      } else {
-        cronJob.start();
-      }
+      const cronJob = CronJob.from({
+        ...options,
+        onTick: target as CronCallback<null, false>,
+        start: !options.disabled
+      });
 
       this.cronJobs[key].ref = cronJob;
       this.schedulerRegistry.addCronJob(key, cronJob);
@@ -124,7 +112,7 @@ export class SchedulerOrchestrator
 
   addCron(
     methodRef: Function,
-    options: CronOptions & Record<'cronTime', string | Date | any>,
+    options: CronOptions & Record<'cronTime', CronJobParams['cronTime']>,
   ) {
     const name = options.name || v4();
     this.cronJobs[name] = {

@@ -1,12 +1,12 @@
 import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { CronJob } from "cron";
 import sinon from 'sinon';
+import { CronExpression } from "../../lib";
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
-import { CronJob } from "cron";
-import { CronExpression } from "../../lib";
 
 const deleteAllRegisteredJobsExceptOne = (
   registry: SchedulerRegistry,
@@ -62,7 +62,7 @@ describe('Cron', () => {
     const job = registry.getCronJob('EXECUTES_EVERY_30_SECONDS');
     deleteAllRegisteredJobsExceptOne(registry, 'EXECUTES_EVERY_30_SECONDS');
 
-    expect(job.running).toBeTruthy();
+    expect(job.running).toBe(true);
     expect(service.callsCount).toEqual(0);
 
     clock.tick('30');
@@ -70,7 +70,7 @@ describe('Cron', () => {
     expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:30.000Z'));
 
     clock.tick('31');
-    expect(job.running).toBeFalsy();
+    expect(job.running).toBe(false);
   });
 
   it(`should run "cron" 3 times every 60 seconds`, async () => {
@@ -88,7 +88,7 @@ describe('Cron', () => {
     expect(job.lastDate()).toEqual(new Date('2020-01-01T00:03:00.000Z'));
 
     clock.tick('03:01');
-    expect(job.running).toBeFalsy();
+    expect(job.running).toBe(false);
   });
 
   it(`should run "cron" 3 times every hour`, async () => {
@@ -106,7 +106,7 @@ describe('Cron', () => {
     expect(job.lastDate()).toEqual(new Date('2020-01-01T03:00:00.000Z'));
 
     clock.tick('03:00:01');
-    expect(job.running).toBeFalsy();
+    expect(job.running).toBe(false);
   });
 
   it(`should not run "cron" at all`, async () => {
@@ -143,10 +143,10 @@ describe('Cron', () => {
 
     const job = registry.getCronJob('dynamic');
     expect(job).toBeDefined();
-    expect(job.running).toBeUndefined();
+    expect(job.running).toBe(false);
 
     job.start();
-    expect(job.running).toEqual(true);
+    expect(job.running).toBe(true);
 
     clock.tick(3000);
     expect(service.dynamicCallsCount).toEqual(3);
