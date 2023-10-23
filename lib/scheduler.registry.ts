@@ -1,11 +1,9 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { CronJob } from 'cron';
+import { Injectable } from '@nestjs/common';
+import { Cron as CronJob } from 'croner';
 import { DUPLICATE_SCHEDULER, NO_SCHEDULER_FOUND } from './schedule.messages';
 
 @Injectable()
 export class SchedulerRegistry {
-  private readonly logger = new Logger(SchedulerRegistry.name);
-
   private readonly cronJobs = new Map<string, CronJob>();
   private readonly timeouts = new Map<string, any>();
   private readonly intervals = new Map<string, any>();
@@ -52,8 +50,6 @@ export class SchedulerRegistry {
     if (ref) {
       throw new Error(DUPLICATE_SCHEDULER('Cron Job', name));
     }
-
-    job.fireOnTick = this.wrapFunctionInTryCatchBlocks(job.fireOnTick, job);
     this.cronJobs.set(name, job);
   }
 
@@ -103,13 +99,4 @@ export class SchedulerRegistry {
     this.timeouts.delete(name);
   }
 
-  private wrapFunctionInTryCatchBlocks(methodRef: Function, instance: object): Function {
-    return async (...args: unknown[]) => {
-      try {
-        await methodRef.call(instance, ...args);
-      } catch (error) {
-        this.logger.error(error);
-      }
-    };
-  }
 }

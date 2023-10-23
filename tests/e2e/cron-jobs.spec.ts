@@ -5,8 +5,8 @@ import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
-import { CronJob } from "cron";
-import { CronExpression } from "../../lib";
+import { Cron as CronJob } from 'croner';
+import { CronExpression } from '../../lib';
 
 const deleteAllRegisteredJobsExceptOne = (
   registry: SchedulerRegistry,
@@ -41,17 +41,22 @@ describe('Cron', () => {
     expect(service.callsCount).toEqual(3);
   });
 
-  it(`should catch and log exception inside cron-function added by scheduler`, async() => {
+  it(`should catch and log exception inside cron-function added by scheduler`, async () => {
     await app.init();
-    const registry = app.get(SchedulerRegistry);
-    registry['logger'].error = jest.fn();
-    const job = new CronJob(CronExpression.EVERY_SECOND, () => {
-      throw new Error('ERROR IN CRONJOB GOT CATCHED');
-    });
-    registry.addCronJob('THROWS_EXCEPTION_INSIDE', job);
-    job.start();
+    const errorHandler = jest.fn();
+    const job = CronJob(
+      CronExpression.EVERY_SECOND,
+      { catch: errorHandler },
+      () => {
+        throw new Error('ERROR IN CRONJOB GOT CATCHED');
+      },
+    );
+    job.resume();
     clock.tick('1');
-    expect(registry['logger'].error).toHaveBeenCalledWith(new Error('ERROR IN CRONJOB GOT CATCHED'));
+    expect(errorHandler).toHaveBeenCalledWith(
+      new Error('ERROR IN CRONJOB GOT CATCHED'),
+      expect.anything()
+    );
   });
 
   it(`should run "cron" once after 30 seconds`, async () => {
@@ -62,15 +67,15 @@ describe('Cron', () => {
     const job = registry.getCronJob('EXECUTES_EVERY_30_SECONDS');
     deleteAllRegisteredJobsExceptOne(registry, 'EXECUTES_EVERY_30_SECONDS');
 
-    expect(job.running).toBeTruthy();
+    expect(job.isRunning()).toBeTruthy();
     expect(service.callsCount).toEqual(0);
 
     clock.tick('30');
     expect(service.callsCount).toEqual(1);
-    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:30.000Z'));
+    expect(job.currentRun()).toEqual(new Date('2020-01-01T00:00:30.000Z'));
 
     clock.tick('31');
-    expect(job.running).toBeFalsy();
+    expect(job.isRunning()).toBeFalsy();
   });
 
   it(`should run "cron" 3 times every 60 seconds`, async () => {
@@ -85,10 +90,10 @@ describe('Cron', () => {
 
     clock.tick('03:00');
     expect(service.callsCount).toEqual(3);
-    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:03:00.000Z'));
+    expect(job.currentRun()).toEqual(new Date('2020-01-01T00:03:00.000Z'));
 
     clock.tick('03:01');
-    expect(job.running).toBeFalsy();
+    expect(job.isRunning()).toBeFalsy();
   });
 
   it(`should run "cron" 3 times every hour`, async () => {
@@ -103,10 +108,10 @@ describe('Cron', () => {
 
     clock.tick('03:00:00');
     expect(service.callsCount).toEqual(3);
-    expect(job.lastDate()).toEqual(new Date('2020-01-01T03:00:00.000Z'));
+    expect(job.currentRun()).toEqual(new Date('2020-01-01T03:00:00.000Z'));
 
     clock.tick('03:00:01');
-    expect(job.running).toBeFalsy();
+    expect(job.isRunning()).toBeFalsy();
   });
 
   it(`should not run "cron" at all`, async () => {
@@ -115,7 +120,7 @@ describe('Cron', () => {
     await app.init();
     const registry = app.get(SchedulerRegistry);
 
-    expect(registry.getCronJob('DISABLED').running).toBeFalsy();
+    expect(registry.getCronJob('DISABLED').isRunning()).toBeFalsy();
   });
 
   it(`should return cron id by name`, async () => {
@@ -142,11 +147,12 @@ describe('Cron', () => {
     expect(jobs.get('dynamic')).toEqual(addedJob);
 
     const job = registry.getCronJob('dynamic');
-    expect(job).toBeDefined();
-    expect(job.running).toBeUndefined();
 
-    job.start();
-    expect(job.running).toEqual(true);
+    expect(job).toBeDefined();
+    expect(job.isRunning()).toEqual(false);
+
+    job.resume();
+    expect(job.isRunning()).toEqual(true);
 
     clock.tick(3000);
     expect(service.dynamicCallsCount).toEqual(3);
