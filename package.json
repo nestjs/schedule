@@ -45,7 +45,7 @@
     "release-it": "17.2.1",
     "rimraf": "5.0.7",
     "rxjs": "7.8.1",
-    "sinon": "17.0.2",
+    "sinon": "18.0.0",
     "ts-jest": "29.1.2",
     "typescript": "5.4.5"
   },
