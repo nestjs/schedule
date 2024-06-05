@@ -8,15 +8,15 @@ import {
 } from '../schedule.constants';
 
 /**
- * Schedules an timeout (`setTimeout`).
+ * Schedules a timeout (`setTimeout`).
  */
 export function Timeout(timeout: number): MethodDecorator;
 /**
- * Schedules an timeout (`setTimeout`).
+ * Schedules a timeout (`setTimeout`).
  */
 export function Timeout(name: string, timeout: number): MethodDecorator;
 /**
- * Schedules an timeout (`setTimeout`).
+ * Schedules a timeout (`setTimeout`).
  */
 export function Timeout(
   nameOrTimeout: string | number,
