@@ -4,17 +4,26 @@ import { SchedulerMetadataAccessor } from './schedule-metadata.accessor';
 import { ScheduleExplorer } from './schedule.explorer';
 import { SchedulerOrchestrator } from './scheduler.orchestrator';
 import { SchedulerRegistry } from './scheduler.registry';
+import { ScheduleModuleOptions } from './interfaces/schedule-module-options.interface';
+import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants';
 
 @Module({
   imports: [DiscoveryModule],
   providers: [SchedulerMetadataAccessor, SchedulerOrchestrator],
 })
 export class ScheduleModule {
-  static forRoot(): DynamicModule {
+  static forRoot(options: ScheduleModuleOptions = {}): DynamicModule {
     return {
       global: true,
       module: ScheduleModule,
-      providers: [ScheduleExplorer, SchedulerRegistry],
+      providers: [
+        ScheduleExplorer,
+        SchedulerRegistry,
+        {
+          provide: SCHEDULE_MODULE_OPTIONS,
+          useValue: options,
+        },
+      ],
       exports: [SchedulerRegistry],
     };
   }
