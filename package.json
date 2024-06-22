@@ -29,7 +29,7 @@
     "@nestjs/platform-express": "10.3.9",
     "@nestjs/testing": "10.3.9",
     "@types/jest": "29.5.12",
-    "@types/node": "20.14.7",
+    "@types/node": "20.14.8",
     "@types/sinon": "17.0.3",
     "@types/uuid": "9.0.8",
     "@typescript-eslint/eslint-plugin": "7.13.1",
