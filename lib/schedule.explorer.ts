@@ -1,15 +1,19 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
 import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
 import { SchedulerType } from './enums/scheduler-type.enum';
 import { SchedulerMetadataAccessor } from './schedule-metadata.accessor';
 import { SchedulerOrchestrator } from './scheduler.orchestrator';
+import { ScheduleModuleOptions } from './interfaces/schedule-module-options.interface';
+import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants';
 
 @Injectable()
 export class ScheduleExplorer implements OnModuleInit {
   private readonly logger = new Logger('Scheduler');
 
   constructor(
+    @Inject(SCHEDULE_MODULE_OPTIONS)
+    private readonly moduleOptions: ScheduleModuleOptions,
     private readonly schedulerOrchestrator: SchedulerOrchestrator,
     private readonly discoveryService: DiscoveryService,
     private readonly metadataAccessor: SchedulerMetadataAccessor,
@@ -27,16 +31,16 @@ export class ScheduleExplorer implements OnModuleInit {
     ];
     instanceWrappers.forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
-            
+
       if (!instance || !Object.getPrototypeOf(instance)) {
         return;
       }
 
-      const processMethod = (name: string) => 
+      const processMethod = (name: string) =>
         wrapper.isDependencyTreeStatic()
           ? this.lookupSchedulers(instance, name)
           : this.warnForNonStaticProviders(wrapper, instance, name);
-      
+
       // TODO(v4): remove this after dropping support for nestjs v9.3.2
       if (!Reflect.has(this.metadataScanner, 'getAllMethodNames')) {
         this.metadataScanner.scanFromPrototype(
@@ -60,15 +64,20 @@ export class ScheduleExplorer implements OnModuleInit {
 
     switch (metadata) {
       case SchedulerType.CRON: {
+        if (!this.moduleOptions.cronJobs) {
+          return;
+        }
         const cronMetadata = this.metadataAccessor.getCronMetadata(methodRef);
         const cronFn = this.wrapFunctionInTryCatchBlocks(methodRef, instance);
 
         return this.schedulerOrchestrator.addCron(cronFn, cronMetadata!);
       }
       case SchedulerType.TIMEOUT: {
-        const timeoutMetadata = this.metadataAccessor.getTimeoutMetadata(
-          methodRef,
-        );
+        if (!this.moduleOptions.timeouts) {
+          return;
+        }
+        const timeoutMetadata =
+          this.metadataAccessor.getTimeoutMetadata(methodRef);
         const name = this.metadataAccessor.getSchedulerName(methodRef);
         const timeoutFn = this.wrapFunctionInTryCatchBlocks(
           methodRef,
@@ -82,9 +91,11 @@ export class ScheduleExplorer implements OnModuleInit {
         );
       }
       case SchedulerType.INTERVAL: {
-        const intervalMetadata = this.metadataAccessor.getIntervalMetadata(
-          methodRef,
-        );
+        if (!this.moduleOptions.intervals) {
+          return;
+        }
+        const intervalMetadata =
+          this.metadataAccessor.getIntervalMetadata(methodRef);
         const name = this.metadataAccessor.getSchedulerName(methodRef);
         const intervalFn = this.wrapFunctionInTryCatchBlocks(
           methodRef,
@@ -110,18 +121,27 @@ export class ScheduleExplorer implements OnModuleInit {
 
     switch (metadata) {
       case SchedulerType.CRON: {
+        if (!this.moduleOptions.cronJobs) {
+          return;
+        }
         this.logger.warn(
           `Cannot register cron job "${wrapper.name}@${key}" because it is defined in a non static provider.`,
         );
         break;
       }
       case SchedulerType.TIMEOUT: {
+        if (!this.moduleOptions.timeouts) {
+          return;
+        }
         this.logger.warn(
           `Cannot register timeout "${wrapper.name}@${key}" because it is defined in a non static provider.`,
         );
         break;
       }
       case SchedulerType.INTERVAL: {
+        if (!this.moduleOptions.intervals) {
+          return;
+        }
         this.logger.warn(
           `Cannot register interval "${wrapper.name}@${key}" because it is defined in a non static provider.`,
         );
