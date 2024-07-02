@@ -12,7 +12,19 @@ import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants';
   providers: [SchedulerMetadataAccessor, SchedulerOrchestrator],
 })
 export class ScheduleModule {
-  static forRoot(options: ScheduleModuleOptions = {}): DynamicModule {
+  static forRoot(
+    options: Partial<ScheduleModuleOptions> = {
+      cronJobs: true,
+      intervals: true,
+      timeouts: true,
+    },
+  ): DynamicModule {
+    const optionsWithDefaults = {
+      cronJobs: true,
+      intervals: true,
+      timeouts: true,
+      ...options,
+    };
     return {
       global: true,
       module: ScheduleModule,
@@ -21,7 +33,7 @@ export class ScheduleModule {
         SchedulerRegistry,
         {
           provide: SCHEDULE_MODULE_OPTIONS,
-          useValue: options,
+          useValue: optionsWithDefaults,
         },
       ],
       exports: [SchedulerRegistry],

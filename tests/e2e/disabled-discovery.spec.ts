@@ -9,7 +9,11 @@ describe('Cron', () => {
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             imports: [
-                AppModule.registerCron({ disableCronJobDiscovery: true }),
+                AppModule.registerCron({
+                    cronJobs: false,
+                    intervals: true,
+                    timeouts: true,
+                }),
             ],
         }).compile();
 
@@ -34,7 +38,11 @@ describe('Interval', () => {
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             imports: [
-                AppModule.registerInterval({ disableIntervalDiscovery: true }),
+                AppModule.registerInterval({
+                    cronJobs: true,
+                    intervals: false,
+                    timeouts: true,
+                }),
             ],
         }).compile();
 
@@ -59,7 +67,11 @@ describe('Timeout', () => {
     beforeEach(async () => {
         const module = await Test.createTestingModule({
             imports: [
-                AppModule.registerTimeout({ disableTimeoutDiscovery: true }),
+                AppModule.registerTimeout({
+                    cronJobs: true,
+                    intervals: true,
+                    timeouts: false,
+                }),
             ],
         }).compile();
 

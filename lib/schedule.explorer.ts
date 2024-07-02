@@ -64,7 +64,7 @@ export class ScheduleExplorer implements OnModuleInit {
 
     switch (metadata) {
       case SchedulerType.CRON: {
-        if (this.moduleOptions.disableCronJobDiscovery) {
+        if (!this.moduleOptions.cronJobs) {
           return;
         }
         const cronMetadata = this.metadataAccessor.getCronMetadata(methodRef);
@@ -73,7 +73,7 @@ export class ScheduleExplorer implements OnModuleInit {
         return this.schedulerOrchestrator.addCron(cronFn, cronMetadata!);
       }
       case SchedulerType.TIMEOUT: {
-        if (this.moduleOptions.disableTimeoutDiscovery) {
+        if (!this.moduleOptions.timeouts) {
           return;
         }
         const timeoutMetadata =
@@ -91,7 +91,7 @@ export class ScheduleExplorer implements OnModuleInit {
         );
       }
       case SchedulerType.INTERVAL: {
-        if (this.moduleOptions.disableIntervalDiscovery) {
+        if (!this.moduleOptions.intervals) {
           return;
         }
         const intervalMetadata =
@@ -121,7 +121,7 @@ export class ScheduleExplorer implements OnModuleInit {
 
     switch (metadata) {
       case SchedulerType.CRON: {
-        if (this.moduleOptions.disableCronJobDiscovery) {
+        if (!this.moduleOptions.cronJobs) {
           return;
         }
         this.logger.warn(
@@ -130,7 +130,7 @@ export class ScheduleExplorer implements OnModuleInit {
         break;
       }
       case SchedulerType.TIMEOUT: {
-        if (this.moduleOptions.disableTimeoutDiscovery) {
+        if (!this.moduleOptions.timeouts) {
           return;
         }
         this.logger.warn(
@@ -139,7 +139,7 @@ export class ScheduleExplorer implements OnModuleInit {
         break;
       }
       case SchedulerType.INTERVAL: {
-        if (this.moduleOptions.disableIntervalDiscovery) {
+        if (!this.moduleOptions.intervals) {
           return;
         }
         this.logger.warn(
