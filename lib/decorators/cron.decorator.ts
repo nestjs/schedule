@@ -35,10 +35,8 @@ export type CronOptions = {
    * @default false
    */
   disabled?: boolean;
-} & 
-(
-  // make timeZone & utcOffset mutually exclusive
-  | {
+} & // make timeZone & utcOffset mutually exclusive
+(| {
       timeZone?: string;
       utcOffset?: never;
     }
