@@ -13,7 +13,7 @@ import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants';
 })
 export class ScheduleModule {
   static forRoot(
-    options: Partial<ScheduleModuleOptions> = {
+    options: ScheduleModuleOptions = {
       cronJobs: true,
       intervals: true,
       timeouts: true,
