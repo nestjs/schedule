@@ -11,7 +11,7 @@ import { ScheduleModuleOptions } from '../../lib/interfaces/schedule-module-opti
 @Module({})
 export class AppModule {
   static registerTimeout(
-    scheduleModuleOptions: ScheduleModuleOptions = {},
+    scheduleModuleOptions?: ScheduleModuleOptions,
   ): DynamicModule {
     return {
       module: AppModule,
@@ -21,7 +21,7 @@ export class AppModule {
   }
 
   static registerRequestScopedTimeout(
-    scheduleModuleOptions: ScheduleModuleOptions = {},
+    scheduleModuleOptions?: ScheduleModuleOptions,
   ): DynamicModule {
     return {
       module: AppModule,
@@ -31,7 +31,7 @@ export class AppModule {
   }
 
   static registerInterval(
-    scheduleModuleOptions: ScheduleModuleOptions = {},
+    scheduleModuleOptions?: ScheduleModuleOptions,
   ): DynamicModule {
     return {
       module: AppModule,
@@ -41,7 +41,7 @@ export class AppModule {
   }
 
   static registerRequestScopedInterval(
-    scheduleModuleOptions: ScheduleModuleOptions = {},
+    scheduleModuleOptions?: ScheduleModuleOptions,
   ): DynamicModule {
     return {
       module: AppModule,
@@ -51,7 +51,7 @@ export class AppModule {
   }
 
   static registerCron(
-    scheduleModuleOptions: ScheduleModuleOptions = {},
+    scheduleModuleOptions?: ScheduleModuleOptions,
   ): DynamicModule {
     return {
       module: AppModule,
@@ -61,7 +61,7 @@ export class AppModule {
   }
 
   static registerRequestScopedCron(
-    scheduleModuleOptions: ScheduleModuleOptions = {},
+    scheduleModuleOptions?: ScheduleModuleOptions,
   ): DynamicModule {
     return {
       module: AppModule,
