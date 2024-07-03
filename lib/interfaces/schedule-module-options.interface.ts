@@ -1,5 +1,5 @@
 export interface ScheduleModuleOptions {
-    cronJobs?: boolean;
-    intervals?: boolean;
-    timeouts?: boolean;
+  cronJobs?: boolean;
+  intervals?: boolean;
+  timeouts?: boolean;
 }
