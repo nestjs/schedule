@@ -6,53 +6,66 @@ import { RequestScopedCronService } from './request-scoped-cron.service';
 import { RequestScopedIntervalService } from './request-scoped-interval.service';
 import { RequestScopedTimeoutService } from './request-scoped-timeout.service';
 import { TimeoutService } from './timeout.service';
+import { ScheduleModuleOptions } from '../../lib/interfaces/schedule-module-options.interface';
 
 @Module({})
 export class AppModule {
-  static registerTimeout(): DynamicModule {
+  static registerTimeout(
+    scheduleModuleOptions?: ScheduleModuleOptions,
+  ): DynamicModule {
     return {
       module: AppModule,
-      imports: [ScheduleModule.forRoot()],
+      imports: [ScheduleModule.forRoot(scheduleModuleOptions)],
       providers: [TimeoutService],
     };
   }
 
-  static registerRequestScopedTimeout(): DynamicModule {
+  static registerRequestScopedTimeout(
+    scheduleModuleOptions?: ScheduleModuleOptions,
+  ): DynamicModule {
     return {
       module: AppModule,
-      imports: [ScheduleModule.forRoot()],
+      imports: [ScheduleModule.forRoot(scheduleModuleOptions)],
       providers: [RequestScopedTimeoutService],
     };
   }
 
-  static registerInterval(): DynamicModule {
+  static registerInterval(
+    scheduleModuleOptions?: ScheduleModuleOptions,
+  ): DynamicModule {
     return {
       module: AppModule,
-      imports: [ScheduleModule.forRoot()],
+      imports: [ScheduleModule.forRoot(scheduleModuleOptions)],
       providers: [IntervalService],
     };
   }
 
-  static registerRequestScopedInterval(): DynamicModule {
+  static registerRequestScopedInterval(
+    scheduleModuleOptions?: ScheduleModuleOptions,
+  ): DynamicModule {
     return {
       module: AppModule,
-      imports: [ScheduleModule.forRoot()],
+      imports: [ScheduleModule.forRoot(scheduleModuleOptions)],
       providers: [RequestScopedIntervalService],
     };
   }
 
-  static registerCron(): DynamicModule {
+  static registerCron(
+    scheduleModuleOptions?: ScheduleModuleOptions,
+  ): DynamicModule {
     return {
       module: AppModule,
-      imports: [ScheduleModule.forRoot()],
+      imports: [ScheduleModule.forRoot(scheduleModuleOptions)],
       providers: [CronService],
     };
   }
 
-  static registerRequestScopedCron(): DynamicModule {
+  static registerRequestScopedCron(
+    scheduleModuleOptions?: ScheduleModuleOptions,
+  ): DynamicModule {
     return {
       module: AppModule,
-      imports: [ScheduleModule.forRoot()],
+      imports: [ScheduleModule.forRoot(scheduleModuleOptions)],
       providers: [RequestScopedCronService],
     };
   }
