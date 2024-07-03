@@ -12,13 +12,7 @@ import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants';
   providers: [SchedulerMetadataAccessor, SchedulerOrchestrator],
 })
 export class ScheduleModule {
-  static forRoot(
-    options: ScheduleModuleOptions = {
-      cronJobs: true,
-      intervals: true,
-      timeouts: true,
-    },
-  ): DynamicModule {
+  static forRoot(options: ScheduleModuleOptions = {}): DynamicModule {
     const optionsWithDefaults = {
       cronJobs: true,
       intervals: true,

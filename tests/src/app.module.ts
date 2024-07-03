@@ -11,11 +11,7 @@ import { ScheduleModuleOptions } from '../../lib/interfaces/schedule-module-opti
 @Module({})
 export class AppModule {
   static registerTimeout(
-    scheduleModuleOptions: ScheduleModuleOptions = {
-      cronJobs: true,
-      intervals: true,
-      timeouts: true,
-    },
+    scheduleModuleOptions: ScheduleModuleOptions = {},
   ): DynamicModule {
     return {
       module: AppModule,
@@ -25,11 +21,7 @@ export class AppModule {
   }
 
   static registerRequestScopedTimeout(
-    scheduleModuleOptions: ScheduleModuleOptions = {
-      cronJobs: true,
-      intervals: true,
-      timeouts: true,
-    },
+    scheduleModuleOptions: ScheduleModuleOptions = {},
   ): DynamicModule {
     return {
       module: AppModule,
@@ -39,11 +31,7 @@ export class AppModule {
   }
 
   static registerInterval(
-    scheduleModuleOptions: ScheduleModuleOptions = {
-      cronJobs: true,
-      intervals: true,
-      timeouts: true,
-    },
+    scheduleModuleOptions: ScheduleModuleOptions = {},
   ): DynamicModule {
     return {
       module: AppModule,
@@ -53,11 +41,7 @@ export class AppModule {
   }
 
   static registerRequestScopedInterval(
-    scheduleModuleOptions: ScheduleModuleOptions = {
-      cronJobs: true,
-      intervals: true,
-      timeouts: true,
-    },
+    scheduleModuleOptions: ScheduleModuleOptions = {},
   ): DynamicModule {
     return {
       module: AppModule,
@@ -67,11 +51,7 @@ export class AppModule {
   }
 
   static registerCron(
-    scheduleModuleOptions: ScheduleModuleOptions = {
-      cronJobs: true,
-      intervals: true,
-      timeouts: true,
-    },
+    scheduleModuleOptions: ScheduleModuleOptions = {},
   ): DynamicModule {
     return {
       module: AppModule,
@@ -81,11 +61,7 @@ export class AppModule {
   }
 
   static registerRequestScopedCron(
-    scheduleModuleOptions: ScheduleModuleOptions = {
-      cronJobs: true,
-      intervals: true,
-      timeouts: true,
-    },
+    scheduleModuleOptions: ScheduleModuleOptions = {},
   ): DynamicModule {
     return {
       module: AppModule,
