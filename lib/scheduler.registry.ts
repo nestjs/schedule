@@ -1,12 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { CronJob } from 'cron';
+import type { CronJob, CronOnCompleteCommand } from 'cron';
 import { DUPLICATE_SCHEDULER, NO_SCHEDULER_FOUND } from './schedule.messages';
 
 @Injectable()
-export class SchedulerRegistry {
+export class SchedulerRegistry<
+  OC extends CronOnCompleteCommand | null = null,
+  C = null,
+> {
   private readonly logger = new Logger(SchedulerRegistry.name);
 
-  private readonly cronJobs = new Map<string, CronJob>();
+  private readonly cronJobs = new Map<string, CronJob<OC, C>>();
   private readonly timeouts = new Map<string, any>();
   private readonly intervals = new Map<string, any>();
 
@@ -47,7 +50,7 @@ export class SchedulerRegistry {
     return ref;
   }
 
-  addCronJob(name: string, job: CronJob) {
+  addCronJob(name: string, job: CronJob<OC, C>) {
     const ref = this.cronJobs.get(name);
     if (ref) {
       throw new Error(DUPLICATE_SCHEDULER('Cron Job', name));
@@ -73,7 +76,7 @@ export class SchedulerRegistry {
     this.timeouts.set(name, timeoutId);
   }
 
-  getCronJobs(): Map<string, CronJob> {
+  getCronJobs(): Map<string, CronJob<OC, C>> {
     return this.cronJobs;
   }
 
@@ -103,7 +106,10 @@ export class SchedulerRegistry {
     this.timeouts.delete(name);
   }
 
-  private wrapFunctionInTryCatchBlocks(methodRef: Function, instance: object): (...args: unknown[]) => Promise<void> {
+  private wrapFunctionInTryCatchBlocks(
+    methodRef: Function,
+    instance: object,
+  ): (...args: unknown[]) => Promise<void> {
     return async (...args: unknown[]) => {
       try {
         await methodRef.call(instance, ...args);
