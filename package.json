@@ -28,7 +28,7 @@
     "@nestjs/core": "10.4.1",
     "@nestjs/platform-express": "10.4.1",
     "@nestjs/testing": "10.4.1",
-    "@types/jest": "29.5.12",
+    "@types/jest": "29.5.13",
     "@types/node": "20.16.5",
     "@types/sinon": "17.0.3",
     "@types/uuid": "10.0.0",
