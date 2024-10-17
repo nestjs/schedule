@@ -43,7 +43,7 @@ describe('Cron', () => {
 
   it(`should catch and log exception inside cron-function added by scheduler`, async () => {
     await app.init();
-    const registry = app.get(SchedulerRegistry);
+    const registry = app.get<SchedulerRegistry>(SchedulerRegistry);
     registry['logger'].error = jest.fn();
     const job = new CronJob(CronExpression.EVERY_SECOND, () => {
       throw new Error('ERROR IN CRONJOB GOT CATCHED');
@@ -60,7 +60,7 @@ describe('Cron', () => {
     const service = app.get(CronService);
 
     await app.init();
-    const registry = app.get(SchedulerRegistry);
+    const registry = app.get<SchedulerRegistry>(SchedulerRegistry);
     const job = registry.getCronJob('EXECUTES_EVERY_30_SECONDS');
     deleteAllRegisteredJobsExceptOne(registry, 'EXECUTES_EVERY_30_SECONDS');
 
@@ -81,7 +81,7 @@ describe('Cron', () => {
     await app.init();
     expect(service.callsCount).toEqual(0);
 
-    const registry = app.get(SchedulerRegistry);
+    const registry = app.get<SchedulerRegistry>(SchedulerRegistry);
     const job = registry.getCronJob('EXECUTES_EVERY_MINUTE');
     deleteAllRegisteredJobsExceptOne(registry, 'EXECUTES_EVERY_MINUTE');
 
@@ -99,7 +99,7 @@ describe('Cron', () => {
     await app.init();
     expect(service.callsCount).toEqual(0);
 
-    const registry = app.get(SchedulerRegistry);
+    const registry = app.get<SchedulerRegistry>(SchedulerRegistry);
     const job = registry.getCronJob('EXECUTES_EVERY_HOUR');
     deleteAllRegisteredJobsExceptOne(registry, 'EXECUTES_EVERY_HOUR');
 
