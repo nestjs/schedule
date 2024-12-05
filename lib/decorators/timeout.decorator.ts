@@ -1,5 +1,4 @@
 import { applyDecorators, SetMetadata } from '@nestjs/common';
-import { isString } from 'util';
 import { SchedulerType } from '../enums/scheduler-type.enum';
 import {
   SCHEDULER_NAME,
@@ -22,7 +21,7 @@ export function Timeout(
   nameOrTimeout: string | number,
   timeout?: number,
 ): MethodDecorator {
-  const [name, timeoutValue] = isString(nameOrTimeout)
+  const [name, timeoutValue] = typeof nameOrTimeout === 'string'
     ? [nameOrTimeout, timeout]
     : [undefined, nameOrTimeout];
 
