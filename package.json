@@ -18,8 +18,7 @@
     "release": "release-it"
   },
   "dependencies": {
-    "cron": "3.2.1",
-    "uuid": "11.0.3"
+    "cron": "3.2.1"
   },
   "devDependencies": {
     "@commitlint/cli": "19.6.1",
@@ -31,7 +30,6 @@
     "@types/jest": "29.5.14",
     "@types/node": "22.10.5",
     "@types/sinon": "17.0.3",
-    "@types/uuid": "10.0.0",
     "@typescript-eslint/eslint-plugin": "8.19.0",
     "@typescript-eslint/parser": "8.19.0",
     "eslint": "9.17.0",
