@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/schedule",
-  "version": "4.1.1",
+  "version": "4.1.2",
   "description": "Nest - modern, fast, powerful node.js web framework (@schedule)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
