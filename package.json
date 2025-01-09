@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "cron": "3.2.1",
-    "uuid": "11.0.3"
+    "uuid": "11.0.5"
   },
   "devDependencies": {
     "@commitlint/cli": "19.6.1",
