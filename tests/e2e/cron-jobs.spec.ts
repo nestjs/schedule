@@ -44,14 +44,21 @@ describe('Cron', () => {
   it(`should catch and log exception inside cron-function added by scheduler`, async () => {
     await app.init();
     const registry = app.get(SchedulerRegistry);
+    const errorHandlerSpy = jest.fn();
+
     registry['logger'].error = jest.fn();
-    const job = new CronJob(CronExpression.EVERY_SECOND, () => {
-      throw new Error('ERROR IN CRONJOB GOT CATCHED');
+    const job = CronJob.from({
+      cronTime: CronExpression.EVERY_SECOND,
+      onTick: () => {
+        throw new Error('ERROR IN CRONJOB GOT CATCHED');
+      },
+      errorHandler: errorHandlerSpy,
     });
     registry.addCronJob('THROWS_EXCEPTION_INSIDE', job);
     job.start();
     clock.tick('1');
-    expect(registry['logger'].error).toHaveBeenCalledWith(
+
+    expect(errorHandlerSpy).toHaveBeenCalledWith(
       new Error('ERROR IN CRONJOB GOT CATCHED'),
     );
   });
