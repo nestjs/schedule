@@ -4,7 +4,6 @@ import {
   OnApplicationShutdown,
 } from '@nestjs/common';
 import { CronCallback, CronJob, CronJobParams } from 'cron';
-import { v4 } from 'uuid';
 import { CronOptions } from './decorators/cron.decorator';
 import { SchedulerRegistry } from './scheduler.registry';
 
@@ -97,14 +96,14 @@ export class SchedulerOrchestrator
     );
   }
 
-  addTimeout(methodRef: Function, timeout: number, name: string = v4()) {
+  addTimeout(methodRef: Function, timeout: number, name: string = crypto.randomUUID()) {
     this.timeouts[name] = {
       target: methodRef,
       timeout,
     };
   }
 
-  addInterval(methodRef: Function, timeout: number, name: string = v4()) {
+  addInterval(methodRef: Function, timeout: number, name: string = crypto.randomUUID()) {
     this.intervals[name] = {
       target: methodRef,
       timeout,
@@ -115,7 +114,7 @@ export class SchedulerOrchestrator
     methodRef: Function,
     options: CronOptions & Record<'cronTime', CronJobParams['cronTime']>,
   ) {
-    const name = options.name || v4();
+    const name = options.name || crypto.randomUUID();
     this.cronJobs[name] = {
       target: methodRef,
       options,
