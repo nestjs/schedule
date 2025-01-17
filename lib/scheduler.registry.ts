@@ -103,7 +103,10 @@ export class SchedulerRegistry {
     this.timeouts.delete(name);
   }
 
-  private wrapFunctionInTryCatchBlocks(methodRef: Function, instance: object): (...args: unknown[]) => Promise<void> {
+  private wrapFunctionInTryCatchBlocks(
+    methodRef: Function,
+    instance: object,
+  ): (...args: unknown[]) => Promise<void> {
     return async (...args: unknown[]) => {
       try {
         await methodRef.call(instance, ...args);

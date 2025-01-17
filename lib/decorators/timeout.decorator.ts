@@ -21,9 +21,10 @@ export function Timeout(
   nameOrTimeout: string | number,
   timeout?: number,
 ): MethodDecorator {
-  const [name, timeoutValue] = typeof nameOrTimeout === 'string'
-    ? [nameOrTimeout, timeout]
-    : [undefined, nameOrTimeout];
+  const [name, timeoutValue] =
+    typeof nameOrTimeout === 'string'
+      ? [nameOrTimeout, timeout]
+      : [undefined, nameOrTimeout];
 
   return applyDecorators(
     SetMetadata(SCHEDULE_TIMEOUT_OPTIONS, { timeout: timeoutValue }),

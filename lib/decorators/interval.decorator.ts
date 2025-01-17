@@ -21,9 +21,10 @@ export function Interval(
   nameOrTimeout: string | number,
   timeout?: number,
 ): MethodDecorator {
-  const [name, intervalTimeout] = (typeof nameOrTimeout === "string")
-    ? [nameOrTimeout, timeout]
-    : [undefined, nameOrTimeout];
+  const [name, intervalTimeout] =
+    typeof nameOrTimeout === 'string'
+      ? [nameOrTimeout, timeout]
+      : [undefined, nameOrTimeout];
 
   return applyDecorators(
     SetMetadata(SCHEDULE_INTERVAL_OPTIONS, { timeout: intervalTimeout }),

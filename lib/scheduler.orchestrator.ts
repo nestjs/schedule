@@ -22,7 +22,8 @@ type CronJobOptions = TargetHost & CronOptionsHost & RefHost<CronJob>;
 
 @Injectable()
 export class SchedulerOrchestrator
-  implements OnApplicationBootstrap, OnApplicationShutdown {
+  implements OnApplicationBootstrap, OnApplicationShutdown
+{
   private readonly cronJobs: Record<string, CronJobOptions> = {};
   private readonly timeouts: Record<string, TimeoutOptions> = {};
   private readonly intervals: Record<string, IntervalOptions> = {};
@@ -70,7 +71,7 @@ export class SchedulerOrchestrator
       const cronJob = CronJob.from({
         ...options,
         onTick: target as CronCallback<null, false>,
-        start: !options.disabled
+        start: !options.disabled,
       });
 
       this.cronJobs[key].ref = cronJob;
@@ -79,15 +80,15 @@ export class SchedulerOrchestrator
   }
 
   clearTimeouts() {
-    this.schedulerRegistry.getTimeouts().forEach((key) =>
-      this.schedulerRegistry.deleteTimeout(key),
-    );
+    this.schedulerRegistry
+      .getTimeouts()
+      .forEach((key) => this.schedulerRegistry.deleteTimeout(key));
   }
 
   clearIntervals() {
-    this.schedulerRegistry.getIntervals().forEach((key) =>
-      this.schedulerRegistry.deleteInterval(key),
-    );
+    this.schedulerRegistry
+      .getIntervals()
+      .forEach((key) => this.schedulerRegistry.deleteInterval(key));
   }
 
   closeCronJobs() {
