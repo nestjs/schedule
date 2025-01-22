@@ -82,7 +82,14 @@ describe('Cron', () => {
     expect(job.running).toBe(false);
   });
 
-  it(`should run "cron" once after 30 seconds`, async () => {
+  it.only(`should wait for "cron" to complete`, async () => {
+    // run every minute for 61 seconds
+    // 00:01:00 - 00:02:01
+    // 00:02:00 - skipped
+    // 00:03:00 - 00:04:01
+    // 00:04:00 - skipped
+    // 00:05:00 - 00:06:01
+
     const service = app.get(CronService);
 
     await app.init();
@@ -93,17 +100,59 @@ describe('Cron', () => {
     expect(job.running).toBe(true);
     expect(service.callsCount).toEqual(0);
 
-    clock.tick('30');
+    await clock.tickAsync('01:00');
+    // 00:01:00
     expect(service.callsCount).toEqual(1);
-    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:30.000Z'));
+    expect(service.callsFinishedCount).toEqual(0);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:01:00.000Z'));
 
-    clock.tick('31');
+    await clock.tickAsync('00:01');
+    // 00:01:01
     expect(service.callsCount).toEqual(1);
-    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:30.000Z'));
+    expect(service.callsFinishedCount).toEqual(0);
 
-    clock.tick('32');
+    await clock.tickAsync('00:59');
+    // 00:02:00
+    expect(service.callsCount).toEqual(1);
+    expect(service.callsFinishedCount).toEqual(0);
+
+    await clock.tickAsync('00:01');
+    // 00:02:01
+    expect(service.callsCount).toEqual(1);
+    expect(service.callsFinishedCount).toEqual(1);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:02:00.000Z'));
+
+    await clock.tickAsync('00:59');
+    // 00:03:00
     expect(service.callsCount).toEqual(2);
-    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:32.000Z'));
+    expect(service.callsFinishedCount).toEqual(1);
+
+    await clock.tickAsync('00:01');
+    // 00:03:01
+    expect(service.callsCount).toEqual(2);
+    expect(service.callsFinishedCount).toEqual(1);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:03:00.000Z'));
+
+    await clock.tickAsync('00:59');
+    // 00:04:00
+    expect(service.callsCount).toEqual(2);
+    expect(service.callsFinishedCount).toEqual(1);
+
+    await clock.tickAsync('00:01');
+    // 00:04:01
+    expect(service.callsCount).toEqual(2);
+    expect(service.callsFinishedCount).toEqual(2);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:04:00.000Z'));
+
+    await clock.tickAsync('00:59');
+    // 00:05:00
+    expect(service.callsCount).toEqual(3);
+    expect(service.callsFinishedCount).toEqual(2);
+
+    await clock.tickAsync('01:01');
+    // 00:06:01
+    expect(service.callsCount).toEqual(3);
+    expect(service.callsFinishedCount).toEqual(3);
     expect(job.running).toBe(false);
   });
 
@@ -143,7 +192,6 @@ describe('Cron', () => {
     expect(job.running).toBe(false);
   });
 
-  
   it(`should not run "cron" at all`, async () => {
     const service = app.get(CronService);
 
