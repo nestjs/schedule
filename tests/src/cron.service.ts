@@ -75,6 +75,20 @@ export class CronService {
     return job;
   }
 
+  @Cron(CronExpression.EVERY_SECOND, {
+    name: 'WAIT_FOR_COMPLETION',
+    waitForCompletion: true,
+  })
+  async handleLongRunningCron() {
+    ++this.callsCount;
+    await new Promise(r => setTimeout(r, 1000));
+    
+    if (this.callsCount > 2) {
+      const ref = this.schedulerRegistry.getCronJob('WAIT_FOR_COMPLETION');
+      ref!.stop();
+    }
+  }
+
   doesExist(name: string): boolean {
     return this.schedulerRegistry.doesExist('cron', name);
   }

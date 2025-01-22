@@ -82,6 +82,31 @@ describe('Cron', () => {
     expect(job.running).toBe(false);
   });
 
+  it(`should run "cron" once after 30 seconds`, async () => {
+    const service = app.get(CronService);
+
+    await app.init();
+    const registry = app.get(SchedulerRegistry);
+    const job = registry.getCronJob('WAIT_FOR_COMPLETION');
+    deleteAllRegisteredJobsExceptOne(registry, 'WAIT_FOR_COMPLETION');
+
+    expect(job.running).toBe(true);
+    expect(service.callsCount).toEqual(0);
+
+    clock.tick('30');
+    expect(service.callsCount).toEqual(1);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:30.000Z'));
+
+    clock.tick('31');
+    expect(service.callsCount).toEqual(1);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:30.000Z'));
+
+    clock.tick('32');
+    expect(service.callsCount).toEqual(2);
+    expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:32.000Z'));
+    expect(job.running).toBe(false);
+  });
+
   it(`should run "cron" 3 times every 60 seconds`, async () => {
     const service = app.get(CronService);
 
@@ -118,6 +143,7 @@ describe('Cron', () => {
     expect(job.running).toBe(false);
   });
 
+  
   it(`should not run "cron" at all`, async () => {
     const service = app.get(CronService);
 

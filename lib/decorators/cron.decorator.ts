@@ -31,6 +31,12 @@ export type CronOptions = {
   unrefTimeout?: boolean;
 
   /**
+   * If true, no additional instances of cronjob will run until the current onTick callback has completed.
+   * Any new scheduled executions that occur while the current cronjob is running will be skipped entirely.
+   */
+  waitForCompletion?: boolean;
+
+  /**
    * This flag indicates whether the job will be executed at all.
    * @default false
    */
