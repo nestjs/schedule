@@ -82,7 +82,7 @@ describe('Cron', () => {
     expect(job.running).toBe(false);
   });
 
-  it.only(`should wait for "cron" to complete`, async () => {
+  it(`should wait for "cron" to complete`, async () => {
     // run every minute for 61 seconds
     // 00:01:00 - 00:02:01
     // 00:02:00 - skipped
