@@ -7,6 +7,7 @@ import { CronJob } from 'cron';
 @Injectable()
 export class CronService {
   callsCount = 0;
+  callsFinishedCount = 0;
   dynamicCallsCount = 0;
 
   constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
@@ -73,6 +74,21 @@ export class CronService {
     });
     this.schedulerRegistry.addCronJob('dynamic', job);
     return job;
+  }
+
+  @Cron(CronExpression.EVERY_MINUTE, {
+    name: 'WAIT_FOR_COMPLETION',
+    waitForCompletion: true,
+  })
+  async handleLongRunningCron() {
+    ++this.callsCount;
+    await new Promise((r) => setTimeout(r, 61 * 1000));
+    ++this.callsFinishedCount;
+
+    if (this.callsCount > 2) {
+      const ref = this.schedulerRegistry.getCronJob('WAIT_FOR_COMPLETION');
+      ref!.stop();
+    }
   }
 
   doesExist(name: string): boolean {
