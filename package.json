@@ -31,7 +31,7 @@
     "@nestjs/testing": "11.0.10",
     "@types/jest": "29.5.14",
     "@types/node": "22.13.5",
-    "@types/sinon": "17.0.3",
+    "@types/sinon": "17.0.4",
     "eslint": "9.20.1",
     "eslint-config-prettier": "10.0.1",
     "eslint-plugin-prettier": "5.2.3",
