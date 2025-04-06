@@ -7,6 +7,9 @@ import { SchedulerRegistry } from './scheduler.registry';
 import { ScheduleModuleOptions } from './interfaces/schedule-module-options.interface';
 import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants';
 
+/**
+ * @publicApi
+ */
 @Module({
   imports: [DiscoveryModule],
   providers: [SchedulerMetadataAccessor, SchedulerOrchestrator],

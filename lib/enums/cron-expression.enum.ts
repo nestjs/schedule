@@ -1,3 +1,8 @@
+/**
+ * Enum contains various cron expressions for scheduling tasks.
+ * 
+ * @publicApi
+ */
 export enum CronExpression {
   EVERY_SECOND = '* * * * * *',
   EVERY_5_SECONDS = '*/5 * * * * *',

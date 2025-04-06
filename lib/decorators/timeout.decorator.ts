@@ -8,14 +8,20 @@ import {
 
 /**
  * Schedules a timeout (`setTimeout`).
+ * 
+ * @publicApi
  */
 export function Timeout(timeout: number): MethodDecorator;
 /**
  * Schedules a timeout (`setTimeout`).
+ * 
+ * @publicApi
  */
 export function Timeout(name: string, timeout: number): MethodDecorator;
 /**
  * Schedules a timeout (`setTimeout`).
+ * 
+ * @publicApi
  */
 export function Timeout(
   nameOrTimeout: string | number,
