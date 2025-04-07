@@ -8,14 +8,20 @@ import {
 
 /**
  * Schedules an interval (`setInterval`).
+ * 
+ * @publicApi
  */
 export function Interval(timeout: number): MethodDecorator;
 /**
  * Schedules an interval (`setInterval`).
+ * 
+ * @publicApi
  */
 export function Interval(name: string, timeout: number): MethodDecorator;
 /**
  * Schedules an interval (`setInterval`).
+ * 
+ * @publicApi
  */
 export function Interval(
   nameOrTimeout: string | number,

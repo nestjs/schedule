@@ -8,7 +8,9 @@ import {
 } from '../schedule.constants';
 
 /**
- * @ref https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/cron/index.d.ts
+ * Reference links: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/cron/index.d.ts
+ * 
+ * @publicApi
  */
 export type CronOptions = {
   /**
@@ -56,6 +58,8 @@ export type CronOptions = {
  * Creates a scheduled job.
  * @param cronTime The time to fire off your job. This can be in the form of cron syntax, a JS ```Date``` object or a Luxon ```DateTime``` object.
  * @param options Job execution options.
+ * 
+ * @publicApi
  */
 export function Cron(
   cronTime: CronJobParams['cronTime'],
