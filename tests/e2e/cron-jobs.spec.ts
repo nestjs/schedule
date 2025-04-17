@@ -71,7 +71,7 @@ describe('Cron', () => {
     const job = registry.getCronJob('EXECUTES_EVERY_30_SECONDS');
     deleteAllRegisteredJobsExceptOne(registry, 'EXECUTES_EVERY_30_SECONDS');
 
-    expect(job.running).toBe(true);
+    expect(job.isActive).toBe(true);
     expect(service.callsCount).toEqual(0);
 
     clock.tick('30');
@@ -79,7 +79,7 @@ describe('Cron', () => {
     expect(job.lastDate()).toEqual(new Date('2020-01-01T00:00:30.000Z'));
 
     clock.tick('31');
-    expect(job.running).toBe(false);
+    expect(job.isActive).toBe(false);
   });
 
   it(`should wait for "cron" to complete`, async () => {
@@ -97,7 +97,7 @@ describe('Cron', () => {
     const job = registry.getCronJob('WAIT_FOR_COMPLETION');
     deleteAllRegisteredJobsExceptOne(registry, 'WAIT_FOR_COMPLETION');
 
-    expect(job.running).toBe(true);
+    expect(job.isActive).toBe(true);
     expect(service.callsCount).toEqual(0);
 
     await clock.tickAsync('01:00');
@@ -153,7 +153,7 @@ describe('Cron', () => {
     // 00:06:01
     expect(service.callsCount).toEqual(3);
     expect(service.callsFinishedCount).toEqual(3);
-    expect(job.running).toBe(false);
+    expect(job.isActive).toBe(false);
   });
 
   it(`should run "cron" 3 times every 60 seconds`, async () => {
@@ -171,7 +171,7 @@ describe('Cron', () => {
     expect(job.lastDate()).toEqual(new Date('2020-01-01T00:03:00.000Z'));
 
     clock.tick('03:01');
-    expect(job.running).toBe(false);
+    expect(job.isActive).toBe(false);
   });
 
   it(`should run "cron" 3 times every hour`, async () => {
@@ -189,7 +189,7 @@ describe('Cron', () => {
     expect(job.lastDate()).toEqual(new Date('2020-01-01T03:00:00.000Z'));
 
     clock.tick('03:00:01');
-    expect(job.running).toBe(false);
+    expect(job.isActive).toBe(false);
   });
 
   it(`should not run "cron" at all`, async () => {
@@ -198,7 +198,7 @@ describe('Cron', () => {
     await app.init();
     const registry = app.get(SchedulerRegistry);
 
-    expect(registry.getCronJob('DISABLED').running).toBeFalsy();
+    expect(registry.getCronJob('DISABLED').isActive).toBeFalsy();
   });
 
   it(`should return cron id by name`, async () => {
@@ -226,10 +226,10 @@ describe('Cron', () => {
 
     const job = registry.getCronJob('dynamic');
     expect(job).toBeDefined();
-    expect(job.running).toBe(false);
+    expect(job.isActive).toBe(false);
 
     job.start();
-    expect(job.running).toBe(true);
+    expect(job.isActive).toBe(true);
 
     clock.tick(3000);
     expect(service.dynamicCallsCount).toEqual(3);
