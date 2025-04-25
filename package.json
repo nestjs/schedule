@@ -30,7 +30,7 @@
     "@nestjs/platform-express": "11.1.0",
     "@nestjs/testing": "11.1.0",
     "@types/jest": "29.5.14",
-    "@types/node": "22.14.1",
+    "@types/node": "22.15.0",
     "@types/sinon": "17.0.4",
     "eslint": "9.25.1",
     "eslint-config-prettier": "10.1.2",
