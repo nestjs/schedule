@@ -45,7 +45,7 @@
     "rimraf": "6.0.1",
     "rxjs": "7.8.2",
     "sinon": "20.0.0",
-    "ts-jest": "29.3.2",
+    "ts-jest": "29.3.3",
     "typescript": "5.8.3",
     "typescript-eslint": "8.32.1"
   },
