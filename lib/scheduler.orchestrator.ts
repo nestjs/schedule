@@ -6,6 +6,7 @@ import {
 import { CronCallback, CronJob, CronJobParams } from 'cron';
 import { CronOptions } from './decorators/cron.decorator';
 import { SchedulerRegistry } from './scheduler.registry';
+import * as crypto from 'crypto';
 
 type TargetHost = { target: Function };
 type TimeoutHost = { timeout: number };
