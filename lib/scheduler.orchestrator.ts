@@ -35,7 +35,7 @@ export class SchedulerOrchestrator
     this.mountCron();
   }
 
-  BeforeApplicationShutdown() {
+  beforeApplicationShutdown() {
     this.clearTimeouts();
     this.clearIntervals();
     this.closeCronJobs();
