@@ -1,7 +1,7 @@
 import {
+  BeforeApplicationShutdown,
   Injectable,
   OnApplicationBootstrap,
-  OnApplicationShutdown,
 } from '@nestjs/common';
 import { CronCallback, CronJob, CronJobParams } from 'cron';
 import { CronOptions } from './decorators/cron.decorator';
@@ -21,7 +21,7 @@ type CronJobOptions = TargetHost & CronOptionsHost & RefHost<CronJob>;
 
 @Injectable()
 export class SchedulerOrchestrator
-  implements OnApplicationBootstrap, OnApplicationShutdown
+  implements OnApplicationBootstrap, BeforeApplicationShutdown
 {
   private readonly cronJobs: Record<string, CronJobOptions> = {};
   private readonly timeouts: Record<string, TimeoutOptions> = {};
@@ -35,7 +35,7 @@ export class SchedulerOrchestrator
     this.mountCron();
   }
 
-  onApplicationShutdown() {
+  beforeApplicationShutdown() {
     this.clearTimeouts();
     this.clearIntervals();
     this.closeCronJobs();
