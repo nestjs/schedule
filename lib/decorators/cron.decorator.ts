@@ -9,7 +9,7 @@ import {
 
 /**
  * Reference links: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/cron/index.d.ts
- * 
+ *
  * @publicApi
  */
 export type CronOptions = {
@@ -43,6 +43,14 @@ export type CronOptions = {
    * @default false
    */
   disabled?: boolean;
+
+  /**
+   *  Threshold in ms to control whether to execute or skip missed execution deadlines caused by slow or busy hardware.
+   *  Execution delays within threshold will be executed immediately, and otherwise will be skipped.
+   *  In both cases a warning will be printed to the console with the job name and cron expression.
+   *  Default is 250
+   */
+  threshold?: number;
 } & ( // make timeZone & utcOffset mutually exclusive
   | {
       timeZone?: string;
@@ -58,7 +66,7 @@ export type CronOptions = {
  * Creates a scheduled job.
  * @param cronTime The time to fire off your job. This can be in the form of cron syntax, a JS ```Date``` object or a Luxon ```DateTime``` object.
  * @param options Job execution options.
- * 
+ *
  * @publicApi
  */
 export function Cron(
