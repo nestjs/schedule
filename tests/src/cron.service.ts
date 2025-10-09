@@ -14,6 +14,7 @@ export class CronService {
 
   @Cron(CronExpression.EVERY_SECOND, {
     name: 'EXECUTES_EVERY_SECOND',
+    utcOffset: 0,
   })
   handleCron() {
     ++this.callsCount;
@@ -25,6 +26,7 @@ export class CronService {
 
   @Cron(CronExpression.EVERY_30_SECONDS, {
     name: 'EXECUTES_EVERY_30_SECONDS',
+    utcOffset: 0,
   })
   handleCronEvery30Seconds() {
     ++this.callsCount;
@@ -38,6 +40,7 @@ export class CronService {
 
   @Cron(CronExpression.EVERY_MINUTE, {
     name: 'EXECUTES_EVERY_MINUTE',
+    utcOffset: 0,
   })
   handleCronEveryMinute() {
     ++this.callsCount;
@@ -49,6 +52,7 @@ export class CronService {
 
   @Cron(CronExpression.EVERY_HOUR, {
     name: 'EXECUTES_EVERY_HOUR',
+    utcOffset: 0,
   })
   handleCronEveryHour() {
     ++this.callsCount;
@@ -61,6 +65,7 @@ export class CronService {
   @Cron(CronExpression.EVERY_30_SECONDS, {
     name: 'DISABLED',
     disabled: true,
+    utcOffset: 0,
   })
   handleDisabledCron() {}
 
@@ -79,6 +84,7 @@ export class CronService {
   @Cron(CronExpression.EVERY_MINUTE, {
     name: 'WAIT_FOR_COMPLETION',
     waitForCompletion: true,
+    utcOffset: 0,
   })
   async handleLongRunningCron() {
     ++this.callsCount;
