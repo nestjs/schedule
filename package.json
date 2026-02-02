@@ -18,7 +18,7 @@
     "release": "release-it"
   },
   "dependencies": {
-    "cron": "4.3.5"
+    "cron": "4.4.0"
   },
   "devDependencies": {
     "@commitlint/cli": "20.4.1",
