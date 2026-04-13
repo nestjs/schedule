@@ -1,19 +1,20 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "moduleResolution": "bundler",
     "declaration": true,
     "strict": true,
     "removeComments": false,
     "noLib": false,
     "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
     "experimentalDecorators": true,
-    "target": "ES2021",
+    "target": "ES2022",
     "sourceMap": false,
     "outDir": "./dist",
     "rootDir": "./lib",
     "skipLibCheck": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "types": ["node"]
   },
   "include": ["lib/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts", "tests"]

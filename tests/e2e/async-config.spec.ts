@@ -1,3 +1,4 @@
+import { describe, it, expect, afterEach } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { ScheduleModule } from '../../lib/schedule.module';

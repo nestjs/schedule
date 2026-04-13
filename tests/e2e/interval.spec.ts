@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { INestApplication, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
@@ -15,7 +16,7 @@ describe('Interval', () => {
     }).compile();
 
     app = module.createNestApplication();
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   it(`should schedule "interval"`, async () => {
@@ -24,7 +25,7 @@ describe('Interval', () => {
     expect(service.called).toBeFalsy();
 
     await app.init();
-    jest.runAllTimers();
+    vi.runAllTimers();
 
     expect(service.called).toBeTruthy();
   });
@@ -96,7 +97,7 @@ describe('Interval', () => {
     await app.close();
 
     expect(registry.getIntervals().length).toBe(0);
-    expect(jest.getTimerCount()).toBe(0);
+    expect(vi.getTimerCount()).toBe(0);
   });
 
   it('should return true for dynamic interval', async () => {
@@ -115,12 +116,12 @@ describe('Interval', () => {
 
   it(`should not log a warning when the provider is not request scoped`, async () => {
     const logger = {
-      log: jest.fn(),
-      error: jest.fn(),
-      warn: jest.fn(),
+      log: vi.fn(),
+      error: vi.fn(),
+      warn: vi.fn(),
     };
     Logger.overrideLogger(logger);
-    jest.spyOn(logger, 'warn');
+    vi.spyOn(logger, 'warn');
 
     await app.init();
 
@@ -141,17 +142,17 @@ describe('Interval - Request Scoped', () => {
     }).compile();
 
     app = module.createNestApplication();
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   it(`should log a warning when trying to register an interval in a request scoped provider`, async () => {
     const logger = {
-      log: jest.fn(),
-      error: jest.fn(),
-      warn: jest.fn(),
+      log: vi.fn(),
+      error: vi.fn(),
+      warn: vi.fn(),
     };
     Logger.overrideLogger(logger);
-    jest.spyOn(logger, 'warn');
+    vi.spyOn(logger, 'warn');
 
     await app.init();
     const registry = app.get(SchedulerRegistry);
