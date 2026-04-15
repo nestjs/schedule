@@ -69,6 +69,16 @@ export class CronService {
   })
   handleDisabledCron() {}
 
+  @Cron(CronExpression.EVERY_SECOND, {
+    name: 'DISABLED_WITH_INITIAL_DELAY',
+    disabled: true,
+    initialDelay: 1000,
+    utcOffset: 0,
+  })
+  handleDisabledCronWithInitialDelay() {
+    ++this.initialDelayCalls;
+  }
+
   addCronJob(): CronJob {
     const job = new CronJob(CronExpression.EVERY_SECOND, () => {
       ++this.dynamicCallsCount;
@@ -95,6 +105,17 @@ export class CronService {
       const ref = this.schedulerRegistry.getCronJob('WAIT_FOR_COMPLETION');
       ref!.stop();
     }
+  }
+
+  initialDelayCalls = 0;
+
+  @Cron(CronExpression.EVERY_SECOND, {
+    name: 'INITIAL_DELAY',
+    initialDelay: 5000,
+    utcOffset: 0,
+  })
+  handleCronWithInitialDelay() {
+    ++this.initialDelayCalls;
   }
 
   doesExist(name: string): boolean {

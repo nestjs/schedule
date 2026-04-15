@@ -51,6 +51,14 @@ export type CronOptions = {
    *  Default is 250
    */
   threshold?: number;
+
+  /**
+   * Delay in milliseconds before the first cron execution after application bootstrap.
+   * Subsequent runs follow the normal cron schedule.
+   * Useful when the job depends on resources that are not yet ready at application startup
+   * (e.g. database connections, cache warm-up, external services).
+   */
+  initialDelay?: number;
 } & ( // make timeZone & utcOffset mutually exclusive
   | {
       timeZone?: string;
