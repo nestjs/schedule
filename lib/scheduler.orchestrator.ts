@@ -17,9 +17,7 @@ type CronOptionsHost = {
 
 type IntervalOptions = TargetHost & TimeoutHost & RefHost<number>;
 type TimeoutOptions = TargetHost & TimeoutHost & RefHost<number>;
-type CronJobOptions = TargetHost &
-  CronOptionsHost &
-  RefHost<CronJob> & { initialDelayRef?: ReturnType<typeof setTimeout> };
+type CronJobOptions = TargetHost & CronOptionsHost & RefHost<CronJob>;
 
 @Injectable()
 export class SchedulerOrchestrator
@@ -72,19 +70,11 @@ export class SchedulerOrchestrator
       const cronJob = CronJob.from({
         ...options,
         onTick: target as CronCallback<null, false>,
-        start: !options.disabled && !options.initialDelay,
+        start: !options.disabled,
       });
 
       this.cronJobs[key].ref = cronJob;
       this.schedulerRegistry.addCronJob(key, cronJob);
-
-      if (options.initialDelay && options.initialDelay > 0 && !options.disabled) {
-        this.cronJobs[key].initialDelayRef = setTimeout(() => {
-          if (this.schedulerRegistry.doesExist('cron', key)) {
-            cronJob.start();
-          }
-        }, options.initialDelay);
-      }
     });
   }
 
@@ -101,11 +91,6 @@ export class SchedulerOrchestrator
   }
 
   closeCronJobs() {
-    Object.values(this.cronJobs).forEach(({ initialDelayRef }) => {
-      if (initialDelayRef !== undefined) {
-        clearTimeout(initialDelayRef);
-      }
-    });
     Array.from(this.schedulerRegistry.getCronJobs().keys()).forEach((key) =>
       this.schedulerRegistry.deleteCronJob(key),
     );

@@ -292,63 +292,6 @@ describe('Cron', () => {
     expect(service.doesExist('dynamic')).toEqual(false);
   });
 
-  it('should not execute "cron" before initialDelay elapses', async () => {
-    const service = app.get(CronService);
-    await app.init();
-    const registry = app.get(SchedulerRegistry);
-    deleteAllRegisteredJobsExceptOne(registry, 'INITIAL_DELAY');
-
-    // Job should not have fired yet
-    clock.tick(4999);
-    expect(service.initialDelayCalls).toEqual(0);
-
-    // After initialDelay (5000ms) the cron starts; one tick at t=6000ms
-    clock.tick(1001);
-    expect(service.initialDelayCalls).toEqual(1);
-  });
-
-  it('should execute "cron" on schedule after initialDelay', async () => {
-    const service = app.get(CronService);
-    await app.init();
-    const registry = app.get(SchedulerRegistry);
-    deleteAllRegisteredJobsExceptOne(registry, 'INITIAL_DELAY');
-
-    // No ticks before the delay
-    clock.tick(5000);
-    // Cron fires every second; advance 3 more seconds
-    clock.tick(3000);
-    expect(service.initialDelayCalls).toEqual(3);
-  });
-
-  it('should not start "cron" when both disabled and initialDelay are set', async () => {
-    const service = app.get(CronService);
-    await app.init();
-    const registry = app.get(SchedulerRegistry);
-
-    expect(
-      registry.getCronJob('DISABLED_WITH_INITIAL_DELAY').isActive,
-    ).toBeFalsy();
-
-    clock.tick(5000);
-    expect(service.initialDelayCalls).toEqual(0);
-    expect(
-      registry.getCronJob('DISABLED_WITH_INITIAL_DELAY').isActive,
-    ).toBeFalsy();
-  });
-
-  it('should not start "cron" after shutdown when initialDelay is pending', async () => {
-    const service = app.get(CronService);
-    await app.init();
-
-    // Close the app before the 5s delay elapses
-    clock.tick(2000);
-    await app.close();
-
-    // Advance past the original delay — timeout must have been cleared
-    clock.tick(5000);
-    expect(service.initialDelayCalls).toEqual(0);
-  });
-
   it(`should not log a warning when the provider is not request scoped`, async () => {
     const logger = {
       log: vi.fn(),
