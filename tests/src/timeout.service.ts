@@ -17,7 +17,7 @@ export class TimeoutService {
   addTimeout() {
     const timeoutRef = setTimeout(() => {
       this.calledDynamic = true;
-      clearTimeout(this.schedulerRegistry.getInterval('dynamic'));
+      clearTimeout(this.schedulerRegistry.getTimeout('dynamic'));
     }, 2500);
 
     this.schedulerRegistry.addTimeout(
