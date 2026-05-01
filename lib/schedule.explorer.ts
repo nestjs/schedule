@@ -1,11 +1,11 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DiscoveryService, MetadataScanner } from '@nestjs/core';
-import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper';
-import { SchedulerType } from './enums/scheduler-type.enum';
-import { SchedulerMetadataAccessor } from './schedule-metadata.accessor';
-import { SchedulerOrchestrator } from './scheduler.orchestrator';
-import { ScheduleModuleOptions } from './interfaces/schedule-module-options.interface';
-import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants';
+import { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper.js';
+import { SchedulerType } from './enums/scheduler-type.enum.js';
+import { SchedulerMetadataAccessor } from './schedule-metadata.accessor.js';
+import { SchedulerOrchestrator } from './scheduler.orchestrator.js';
+import { ScheduleModuleOptions } from './interfaces/schedule-module-options.interface.js';
+import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants.js';
 
 @Injectable()
 export class ScheduleExplorer implements OnModuleInit {

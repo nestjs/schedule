@@ -1,3 +1,3 @@
-export * from './cron.decorator';
-export * from './interval.decorator';
-export * from './timeout.decorator';
+export * from './cron.decorator.js';
+export * from './interval.decorator.js';
+export * from './timeout.decorator.js';

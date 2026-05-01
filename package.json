@@ -4,6 +4,15 @@
   "description": "Nest - modern, fast, powerful node.js web framework (@schedule)",
   "author": "Kamil Mysliwiec",
   "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "url": "https://github.com/nestjs/schedule#readme",
   "scripts": {
     "build": "rimraf -rf dist && tsc -p tsconfig.json",

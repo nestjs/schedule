@@ -1,10 +1,10 @@
 import { applyDecorators, SetMetadata } from '@nestjs/common';
-import { SchedulerType } from '../enums/scheduler-type.enum';
+import { SchedulerType } from '../enums/scheduler-type.enum.js';
 import {
   SCHEDULER_NAME,
   SCHEDULER_TYPE,
   SCHEDULE_TIMEOUT_OPTIONS,
-} from '../schedule.constants';
+} from '../schedule.constants.js';
 
 /**
  * Schedules a timeout (`setTimeout`).
