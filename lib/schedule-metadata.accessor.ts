@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { CronOptions } from './decorators';
-import { SchedulerType } from './enums/scheduler-type.enum';
-import { IntervalMetadata } from './interfaces/interval-metadata.interface';
-import { TimeoutMetadata } from './interfaces/timeout-metadata.interface';
+import { CronOptions } from './decorators/index.js';
+import { SchedulerType } from './enums/scheduler-type.enum.js';
+import { IntervalMetadata } from './interfaces/interval-metadata.interface.js';
+import { TimeoutMetadata } from './interfaces/timeout-metadata.interface.js';
 import {
   SCHEDULER_NAME,
   SCHEDULER_TYPE,
   SCHEDULE_CRON_OPTIONS,
   SCHEDULE_INTERVAL_OPTIONS,
   SCHEDULE_TIMEOUT_OPTIONS,
-} from './schedule.constants';
+} from './schedule.constants.js';
 
 @Injectable()
 export class SchedulerMetadataAccessor {
