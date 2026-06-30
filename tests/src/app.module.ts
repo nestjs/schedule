@@ -6,6 +6,8 @@ import { RequestScopedCronService } from './request-scoped-cron.service';
 import { RequestScopedIntervalService } from './request-scoped-interval.service';
 import { RequestScopedTimeoutService } from './request-scoped-timeout.service';
 import { TimeoutService } from './timeout.service';
+import { ConfigService } from './config.service';
+import { ConfigResolvedCronService } from './config-resolved-cron.service';
 import { ScheduleModuleOptions } from '../../lib/interfaces/schedule-module-options.interface';
 
 @Module({})
@@ -67,6 +69,16 @@ export class AppModule {
       module: AppModule,
       imports: [ScheduleModule.forRoot(scheduleModuleOptions)],
       providers: [RequestScopedCronService],
+    };
+  }
+
+  static registerConfigResolvedCron(
+    scheduleModuleOptions?: ScheduleModuleOptions,
+  ): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [ScheduleModule.forRoot(scheduleModuleOptions)],
+      providers: [ConfigService, ConfigResolvedCronService],
     };
   }
 }

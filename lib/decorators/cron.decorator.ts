@@ -8,6 +8,30 @@ import {
 } from '../schedule.constants';
 
 /**
+ * Describes how to resolve a cron option value lazily, from the DI container,
+ * once the application has been bootstrapped (e.g. to read it from a
+ * `ConfigService`). The factory is invoked with the providers listed in
+ * `inject`, resolved through `ModuleRef`.
+ *
+ * @example
+ * { inject: [ConfigService], useFactory: (config) => config.get('CRON_TIME') }
+ *
+ * @publicApi
+ */
+export type CronOptionFactory<T> = {
+  inject?: any[];
+  useFactory: (...args: any[]) => T | Promise<T>;
+};
+
+/**
+ * A cron option that is either a plain value or a {@link CronOptionFactory}
+ * resolved from the DI container at bootstrap time.
+ *
+ * @publicApi
+ */
+export type Resolvable<T> = T | CronOptionFactory<T>;
+
+/**
  * Reference links: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/cron/index.d.ts
  *
  * @publicApi
@@ -30,19 +54,19 @@ export type CronOptions = {
   /**
    * If you have code that keeps the event loop running and want to stop the node process when that finishes regardless of the state of your cronjob, you can do so making use of this parameter. This is off by default and cron will run as if it needs to control the event loop. For more information take a look at [timers#timers_timeout_unref](https://nodejs.org/api/timers.html#timers_timeout_unref) from the NodeJS docs.
    */
-  unrefTimeout?: boolean;
+  unrefTimeout?: Resolvable<boolean>;
 
   /**
    * If true, no additional instances of cronjob will run until the current onTick callback has completed.
    * Any new scheduled executions that occur while the current cronjob is running will be skipped entirely.
    */
-  waitForCompletion?: boolean;
+  waitForCompletion?: Resolvable<boolean>;
 
   /**
    * This flag indicates whether the job will be executed at all.
    * @default false
    */
-  disabled?: boolean;
+  disabled?: Resolvable<boolean>;
 
   /**
    *  Threshold in ms to control whether to execute or skip missed execution deadlines caused by slow or busy hardware.
@@ -50,7 +74,7 @@ export type CronOptions = {
    *  In both cases a warning will be printed to the console with the job name and cron expression.
    *  Default is 250
    */
-  threshold?: number;
+  threshold?: Resolvable<number>;
 
   /**
    * Delay in milliseconds before the first cron execution after application bootstrap.
@@ -58,8 +82,32 @@ export type CronOptions = {
    * Useful when the job depends on resources that are not yet ready at application startup
    * (e.g. database connections, cache warm-up, external services).
    */
-  initialDelay?: number;
+  initialDelay?: Resolvable<number>;
 } & ( // make timeZone & utcOffset mutually exclusive
+  | {
+      timeZone?: Resolvable<string>;
+      utcOffset?: never;
+    }
+  | {
+      timeZone?: never;
+      utcOffset?: Resolvable<number>;
+    }
+);
+
+/**
+ * {@link CronOptions} after every {@link Resolvable} field has been resolved to
+ * a plain value. This is what the scheduler works with internally.
+ *
+ * @publicApi
+ */
+export type ResolvedCronOptions = {
+  name?: string;
+  unrefTimeout?: boolean;
+  waitForCompletion?: boolean;
+  disabled?: boolean;
+  threshold?: number;
+  initialDelay?: number;
+} & (
   | {
       timeZone?: string;
       utcOffset?: never;
@@ -72,13 +120,13 @@ export type CronOptions = {
 
 /**
  * Creates a scheduled job.
- * @param cronTime The time to fire off your job. This can be in the form of cron syntax, a JS ```Date``` object or a Luxon ```DateTime``` object.
+ * @param cronTime The time to fire off your job. This can be in the form of cron syntax, a JS ```Date``` object or a Luxon ```DateTime``` object. It may also be a {@link CronOptionFactory} to resolve the value from the DI container at bootstrap time.
  * @param options Job execution options.
  *
  * @publicApi
  */
 export function Cron(
-  cronTime: CronJobParams['cronTime'],
+  cronTime: Resolvable<CronJobParams['cronTime']>,
   options: CronOptions = {},
 ): MethodDecorator {
   const name = options?.name;

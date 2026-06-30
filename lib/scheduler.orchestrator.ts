@@ -4,7 +4,7 @@ import {
   OnApplicationBootstrap,
 } from '@nestjs/common';
 import { CronCallback, CronJob, CronJobParams } from 'cron';
-import { CronOptions } from './decorators/cron.decorator';
+import { ResolvedCronOptions } from './decorators/cron.decorator';
 import { SchedulerRegistry } from './scheduler.registry';
 
 type TargetHost = { target: Function };
@@ -12,7 +12,7 @@ type TimeoutHost = { timeout: number };
 type RefHost<T> = { ref?: T };
 
 type CronOptionsHost = {
-  options: CronOptions & Record<'cronTime', CronJobParams['cronTime']>;
+  options: ResolvedCronOptions & Record<'cronTime', CronJobParams['cronTime']>;
 };
 
 type IntervalOptions = TargetHost & TimeoutHost & RefHost<number>;
@@ -78,7 +78,11 @@ export class SchedulerOrchestrator
       this.cronJobs[key].ref = cronJob;
       this.schedulerRegistry.addCronJob(key, cronJob);
 
-      if (options.initialDelay && options.initialDelay > 0 && !options.disabled) {
+      if (
+        options.initialDelay &&
+        options.initialDelay > 0 &&
+        !options.disabled
+      ) {
         this.cronJobs[key].initialDelayRef = setTimeout(() => {
           if (this.schedulerRegistry.doesExist('cron', key)) {
             cronJob.start();
@@ -111,14 +115,22 @@ export class SchedulerOrchestrator
     );
   }
 
-  addTimeout(methodRef: Function, timeout: number, name: string = crypto.randomUUID()) {
+  addTimeout(
+    methodRef: Function,
+    timeout: number,
+    name: string = crypto.randomUUID(),
+  ) {
     this.timeouts[name] = {
       target: methodRef,
       timeout,
     };
   }
 
-  addInterval(methodRef: Function, timeout: number, name: string = crypto.randomUUID()) {
+  addInterval(
+    methodRef: Function,
+    timeout: number,
+    name: string = crypto.randomUUID(),
+  ) {
     this.intervals[name] = {
       target: methodRef,
       timeout,
@@ -127,7 +139,8 @@ export class SchedulerOrchestrator
 
   addCron(
     methodRef: Function,
-    options: CronOptions & Record<'cronTime', CronJobParams['cronTime']>,
+    options: ResolvedCronOptions &
+      Record<'cronTime', CronJobParams['cronTime']>,
   ) {
     const name = options.name || crypto.randomUUID();
     this.cronJobs[name] = {
