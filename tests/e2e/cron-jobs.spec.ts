@@ -1,8 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { CronJob } from 'cron';
-import { CronExpression } from '../../lib';
+import { Cron, CronExpression } from '../../lib';
+import { DUPLICATE_SCHEDULER } from '../../lib/schedule.messages';
+import { ScheduleModule } from '../../lib/schedule.module';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { CronService } from '../src/cron.service';
@@ -361,6 +363,29 @@ describe('Cron', () => {
     await app.init();
 
     expect(logger.warn).not.toHaveBeenCalled();
+  });
+
+  it(`should throw when two providers declare a cron job with the same name`, async () => {
+    @Injectable()
+    class FirstService {
+      @Cron(CronExpression.EVERY_SECOND, { name: 'shared' })
+      handleCron() {}
+    }
+
+    @Injectable()
+    class SecondService {
+      @Cron(CronExpression.EVERY_SECOND, { name: 'shared' })
+      handleCron() {}
+    }
+
+    const module = await Test.createTestingModule({
+      imports: [ScheduleModule.forRoot()],
+      providers: [FirstService, SecondService],
+    }).compile();
+
+    await expect(module.createNestApplication().init()).rejects.toThrow(
+      DUPLICATE_SCHEDULER('Cron Job', 'shared'),
+    );
   });
 
   afterEach(async () => {
