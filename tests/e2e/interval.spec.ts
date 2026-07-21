@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { Interval } from '../../lib/decorators';
+import { DUPLICATE_SCHEDULER } from '../../lib/schedule.messages';
+import { ScheduleModule } from '../../lib/schedule.module';
 import { SchedulerRegistry } from '../../lib/scheduler.registry';
 import { AppModule } from '../src/app.module';
 import { IntervalService } from '../src/interval.service';
@@ -126,6 +129,29 @@ describe('Interval', () => {
     await app.init();
 
     expect(logger.warn).not.toHaveBeenCalledWith();
+  });
+
+  it(`should throw when two providers declare an interval with the same name`, async () => {
+    @Injectable()
+    class FirstService {
+      @Interval('shared', 2500)
+      handleInterval() {}
+    }
+
+    @Injectable()
+    class SecondService {
+      @Interval('shared', 2500)
+      handleInterval() {}
+    }
+
+    const module = await Test.createTestingModule({
+      imports: [ScheduleModule.forRoot()],
+      providers: [FirstService, SecondService],
+    }).compile();
+
+    await expect(module.createNestApplication().init()).rejects.toThrow(
+      DUPLICATE_SCHEDULER('Interval', 'shared'),
+    );
   });
 
   afterEach(async () => {

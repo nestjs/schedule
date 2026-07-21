@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { CronCallback, CronJob, CronJobParams } from 'cron';
 import { CronOptions } from './decorators/cron.decorator';
+import { DUPLICATE_SCHEDULER } from './schedule.messages';
 import { SchedulerRegistry } from './scheduler.registry';
 
 type TargetHost = { target: Function };
@@ -112,6 +113,9 @@ export class SchedulerOrchestrator
   }
 
   addTimeout(methodRef: Function, timeout: number, name: string = crypto.randomUUID()) {
+    if (Object.hasOwn(this.timeouts, name)) {
+      throw new Error(DUPLICATE_SCHEDULER('Timeout', name));
+    }
     this.timeouts[name] = {
       target: methodRef,
       timeout,
@@ -119,6 +123,9 @@ export class SchedulerOrchestrator
   }
 
   addInterval(methodRef: Function, timeout: number, name: string = crypto.randomUUID()) {
+    if (Object.hasOwn(this.intervals, name)) {
+      throw new Error(DUPLICATE_SCHEDULER('Interval', name));
+    }
     this.intervals[name] = {
       target: methodRef,
       timeout,
@@ -130,6 +137,9 @@ export class SchedulerOrchestrator
     options: CronOptions & Record<'cronTime', CronJobParams['cronTime']>,
   ) {
     const name = options.name || crypto.randomUUID();
+    if (Object.hasOwn(this.cronJobs, name)) {
+      throw new Error(DUPLICATE_SCHEDULER('Cron Job', name));
+    }
     this.cronJobs[name] = {
       target: methodRef,
       options,
