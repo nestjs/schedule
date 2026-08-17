@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   oxc: {
-    decorators: {
+    decorator: {
       legacy: true,
       emitDecoratorMetadata: true,
     },
