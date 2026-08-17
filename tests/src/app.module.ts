@@ -1,12 +1,12 @@
 import { DynamicModule, Module } from '@nestjs/common';
-import { ScheduleModule } from '../../lib/schedule.module';
-import { CronService } from './cron.service';
-import { IntervalService } from './interval.service';
-import { RequestScopedCronService } from './request-scoped-cron.service';
-import { RequestScopedIntervalService } from './request-scoped-interval.service';
-import { RequestScopedTimeoutService } from './request-scoped-timeout.service';
-import { TimeoutService } from './timeout.service';
-import { ScheduleModuleOptions } from '../../lib/interfaces/schedule-module-options.interface';
+import { ScheduleModule } from '../../lib/schedule.module.js';
+import { CronService } from './cron.service.js';
+import { IntervalService } from './interval.service.js';
+import { RequestScopedCronService } from './request-scoped-cron.service.js';
+import { RequestScopedIntervalService } from './request-scoped-interval.service.js';
+import { RequestScopedTimeoutService } from './request-scoped-timeout.service.js';
+import { TimeoutService } from './timeout.service.js';
+import { ScheduleModuleOptions } from '../../lib/interfaces/schedule-module-options.interface.js';
 
 @Module({})
 export class AppModule {

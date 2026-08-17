@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '../../lib/decorators';
-import { CronExpression } from '../../lib/enums';
-import { SchedulerRegistry } from '../../lib/scheduler.registry';
+import { Cron } from '../../lib/decorators/index.js';
+import { CronExpression } from '../../lib/enums/index.js';
+import { SchedulerRegistry } from '../../lib/scheduler.registry.js';
 import { CronJob } from 'cron';
 
 @Injectable()

@@ -3,6 +3,7 @@ lib
 tests
 package-lock.json
 tsconfig.json
+vitest.config.mts
 .prettierrc
 
 # github
