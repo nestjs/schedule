@@ -1,14 +1,14 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { Timeout } from '../../lib/decorators';
-import { DUPLICATE_SCHEDULER } from '../../lib/schedule.messages';
-import { ScheduleModule } from '../../lib/schedule.module';
-import { SchedulerRegistry } from '../../lib/scheduler.registry';
-import { AppModule } from '../src/app.module';
-import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
-import { RequestScopedTimeoutService } from '../src/request-scoped-timeout.service';
-import { TimeoutService } from '../src/timeout.service';
+import { Timeout } from '../../lib/decorators/index.js';
+import { DUPLICATE_SCHEDULER } from '../../lib/schedule.messages.js';
+import { ScheduleModule } from '../../lib/schedule.module.js';
+import { SchedulerRegistry } from '../../lib/scheduler.registry.js';
+import { AppModule } from '../src/app.module.js';
+import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider.js';
+import { RequestScopedTimeoutService } from '../src/request-scoped-timeout.service.js';
+import { TimeoutService } from '../src/timeout.service.js';
 
 describe('Timeout', () => {
   let app: INestApplication;

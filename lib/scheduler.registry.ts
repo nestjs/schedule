@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { CronJob } from 'cron';
-import { DUPLICATE_SCHEDULER, NO_SCHEDULER_FOUND } from './schedule.messages';
+import { DUPLICATE_SCHEDULER, NO_SCHEDULER_FOUND } from './schedule.messages.js';
 
 @Injectable()
 export class SchedulerRegistry {

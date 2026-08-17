@@ -2,13 +2,13 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { CronJob } from 'cron';
-import { Cron, CronExpression } from '../../lib';
-import { DUPLICATE_SCHEDULER } from '../../lib/schedule.messages';
-import { ScheduleModule } from '../../lib/schedule.module';
-import { SchedulerRegistry } from '../../lib/scheduler.registry';
-import { AppModule } from '../src/app.module';
-import { CronService } from '../src/cron.service';
-import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider';
+import { Cron, CronExpression } from '../../lib/index.js';
+import { DUPLICATE_SCHEDULER } from '../../lib/schedule.messages.js';
+import { ScheduleModule } from '../../lib/schedule.module.js';
+import { SchedulerRegistry } from '../../lib/scheduler.registry.js';
+import { AppModule } from '../src/app.module.js';
+import { CronService } from '../src/cron.service.js';
+import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider.js';
 
 const deleteAllRegisteredJobsExceptOne = (
   registry: SchedulerRegistry,

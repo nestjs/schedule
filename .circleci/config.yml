@@ -32,6 +32,9 @@ jobs:
       - run:
           name: Build
           command: npm run build
+      - run:
+          name: Verify ESM output is loadable by Node
+          command: node --input-type=module -e "import('./dist/index.js').then(m => { if (!m.ScheduleModule) throw new Error('ScheduleModule missing from ESM entrypoint'); })"
 
   integration_tests:
     working_directory: ~/nest

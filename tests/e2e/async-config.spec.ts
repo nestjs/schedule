@@ -1,9 +1,9 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { ScheduleModule } from '../../lib/schedule.module';
-import { SchedulerRegistry } from '../../lib/scheduler.registry';
-import { CronService } from '../src/cron.service';
+import { ScheduleModule } from '../../lib/schedule.module.js';
+import { SchedulerRegistry } from '../../lib/scheduler.registry.js';
+import { CronService } from '../src/cron.service.js';
 
 describe('Async Configuration', () => {
   let app: INestApplication;

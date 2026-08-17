@@ -1,5 +1,5 @@
 import { Injectable, Scope } from '@nestjs/common';
-import { Interval } from '../../lib/decorators';
+import { Interval } from '../../lib/decorators/index.js';
 
 @Injectable({ scope: Scope.REQUEST })
 export class RequestScopedIntervalService {

@@ -1,9 +1,9 @@
 # source
 lib
 tests
-index.ts
 package-lock.json
 tsconfig.json
+vitest.config.mts
 .prettierrc
 
 # github

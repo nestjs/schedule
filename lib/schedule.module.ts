@@ -1,15 +1,15 @@
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
-import { SchedulerMetadataAccessor } from './schedule-metadata.accessor';
-import { ScheduleExplorer } from './schedule.explorer';
-import { SchedulerOrchestrator } from './scheduler.orchestrator';
-import { SchedulerRegistry } from './scheduler.registry';
+import { SchedulerMetadataAccessor } from './schedule-metadata.accessor.js';
+import { ScheduleExplorer } from './schedule.explorer.js';
+import { SchedulerOrchestrator } from './scheduler.orchestrator.js';
+import { SchedulerRegistry } from './scheduler.registry.js';
 import {
   ScheduleModuleAsyncOptions,
   ScheduleModuleOptions,
   ScheduleModuleOptionsFactory,
-} from './interfaces/schedule-module-options.interface';
-import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants';
+} from './interfaces/schedule-module-options.interface.js';
+import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants.js';
 
 /**
  * @publicApi

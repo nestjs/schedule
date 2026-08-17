@@ -1,11 +1,11 @@
 import { applyDecorators, SetMetadata } from '@nestjs/common';
 import { CronJobParams } from 'cron';
-import { SchedulerType } from '../enums/scheduler-type.enum';
+import { SchedulerType } from '../enums/scheduler-type.enum.js';
 import {
   SCHEDULE_CRON_OPTIONS,
   SCHEDULER_NAME,
   SCHEDULER_TYPE,
-} from '../schedule.constants';
+} from '../schedule.constants.js';
 
 /**
  * Reference links: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/cron/index.d.ts

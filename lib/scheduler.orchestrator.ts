@@ -4,9 +4,9 @@ import {
   OnApplicationBootstrap,
 } from '@nestjs/common';
 import { CronCallback, CronJob, CronJobParams } from 'cron';
-import { CronOptions } from './decorators/cron.decorator';
-import { DUPLICATE_SCHEDULER } from './schedule.messages';
-import { SchedulerRegistry } from './scheduler.registry';
+import { CronOptions } from './decorators/cron.decorator.js';
+import { DUPLICATE_SCHEDULER } from './schedule.messages.js';
+import { SchedulerRegistry } from './scheduler.registry.js';
 
 type TargetHost = { target: Function };
 type TimeoutHost = { timeout: number };

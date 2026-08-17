@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { SchedulerRegistry } from '../../lib/scheduler.registry';
-import { AppModule } from '../src/app.module';
+import { SchedulerRegistry } from '../../lib/scheduler.registry.js';
+import { AppModule } from '../src/app.module.js';
 
 describe('Cron', () => {
   let app: INestApplication;

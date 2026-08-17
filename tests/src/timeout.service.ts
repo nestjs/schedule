@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Timeout } from '../../lib/decorators';
-import { SchedulerRegistry } from '../../lib/scheduler.registry';
+import { Timeout } from '../../lib/decorators/index.js';
+import { SchedulerRegistry } from '../../lib/scheduler.registry.js';
 
 @Injectable()
 export class TimeoutService {
