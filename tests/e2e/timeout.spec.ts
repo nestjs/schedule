@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { INestApplication, Logger } from '@nestjs/common';
+import { INestApplication, Injectable, Logger } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { Timeout } from '../../lib/decorators/index.js';
+import { DUPLICATE_SCHEDULER } from '../../lib/schedule.messages.js';
+import { ScheduleModule } from '../../lib/schedule.module.js';
 import { SchedulerRegistry } from '../../lib/scheduler.registry.js';
 import { AppModule } from '../src/app.module.js';
 import { nullPrototypeObjectProvider } from '../src/null-prototype-object.provider.js';
@@ -126,6 +129,29 @@ describe('Timeout', () => {
     await app.init();
 
     expect(logger.warn).not.toHaveBeenCalledWith();
+  });
+
+  it(`should throw when two providers declare a timeout with the same name`, async () => {
+    @Injectable()
+    class FirstService {
+      @Timeout('shared', 2500)
+      handleTimeout() {}
+    }
+
+    @Injectable()
+    class SecondService {
+      @Timeout('shared', 2500)
+      handleTimeout() {}
+    }
+
+    const module = await Test.createTestingModule({
+      imports: [ScheduleModule.forRoot()],
+      providers: [FirstService, SecondService],
+    }).compile();
+
+    await expect(module.createNestApplication().init()).rejects.toThrow(
+      DUPLICATE_SCHEDULER('Timeout', 'shared'),
+    );
   });
 
   afterEach(async () => {
