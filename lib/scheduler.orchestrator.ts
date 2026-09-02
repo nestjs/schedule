@@ -81,7 +81,15 @@ export class SchedulerOrchestrator
 
       if (options.initialDelay && options.initialDelay > 0 && !options.disabled) {
         this.cronJobs[key].initialDelayRef = setTimeout(() => {
-          if (this.schedulerRegistry.doesExist('cron', key)) {
+          // Only start the job if it is still the one registered under this
+          // name: the job may have been deleted while the delay was pending,
+          // and a different job may even have been registered under the same
+          // name afterwards. Starting the captured reference would resurrect
+          // the deleted job and run both jobs in parallel.
+          if (
+            this.schedulerRegistry.doesExist('cron', key) &&
+            this.schedulerRegistry.getCronJob(key) === cronJob
+          ) {
             cronJob.start();
           }
         }, options.initialDelay);
