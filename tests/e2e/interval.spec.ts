@@ -39,6 +39,13 @@ describe('Interval', () => {
     expect(registry.getInterval('test')).not.toBeUndefined();
   });
 
+  it(`should support generic type parameter for getInterval`, async () => {
+    await app.init();
+    const registry = app.get(SchedulerRegistry);
+    const interval = registry.getInterval<NodeJS.Timeout>('test');
+    expect(interval).not.toBeUndefined();
+  });
+
   it(`should add dynamic interval`, async () => {
     const service = app.get(IntervalService);
     await app.init();
