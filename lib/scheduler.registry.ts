@@ -31,7 +31,7 @@ export class SchedulerRegistry {
     return ref;
   }
 
-  getInterval(name: string) {
+  getInterval<T = any>(name: string): T {
     const ref = this.intervals.get(name);
     if (typeof ref === 'undefined') {
       throw new Error(NO_SCHEDULER_FOUND('Interval', name));
@@ -39,7 +39,7 @@ export class SchedulerRegistry {
     return ref;
   }
 
-  getTimeout(name: string) {
+  getTimeout<T = any>(name: string): T {
     const ref = this.timeouts.get(name);
     if (typeof ref === 'undefined') {
       throw new Error(NO_SCHEDULER_FOUND('Timeout', name));

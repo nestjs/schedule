@@ -39,6 +39,13 @@ describe('Timeout', () => {
     expect(registry.getTimeout('test')).not.toBeUndefined();
   });
 
+  it(`should support generic type parameter for getTimeout`, async () => {
+    await app.init();
+    const registry = app.get(SchedulerRegistry);
+    const timeout = registry.getTimeout<NodeJS.Timeout>('test');
+    expect(timeout).not.toBeUndefined();
+  });
+
   it(`should add dynamic timeout`, async () => {
     const service = app.get(TimeoutService);
     await app.init();
