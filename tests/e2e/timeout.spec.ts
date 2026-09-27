@@ -138,28 +138,64 @@ describe('Timeout', () => {
     expect(logger.warn).not.toHaveBeenCalledWith();
   });
 
-  it(`should throw when two providers declare a timeout with the same name`, async () => {
-    @Injectable()
-    class FirstService {
-      @Timeout('shared', 2500)
-      handleTimeout() {}
-    }
+  it.each(['__proto__', 'constructor', 'toString'])(
+    'should run and clean up a timeout named %s',
+    async (name) => {
+      const onTick = vi.fn();
 
-    @Injectable()
-    class SecondService {
-      @Timeout('shared', 2500)
-      handleTimeout() {}
-    }
+      @Injectable()
+      class NamedService {
+        @Timeout(name, 1000)
+        handleTick() {
+          onTick();
+        }
+      }
 
-    const module = await Test.createTestingModule({
-      imports: [ScheduleModule.forRoot()],
-      providers: [FirstService, SecondService],
-    }).compile();
+      const module = await Test.createTestingModule({
+        imports: [ScheduleModule.forRoot()],
+        providers: [NamedService],
+      }).compile();
+      app = module.createNestApplication();
+      await app.init();
 
-    await expect(module.createNestApplication().init()).rejects.toThrow(
-      DUPLICATE_SCHEDULER('Timeout', 'shared'),
-    );
-  });
+      const registry = app.get(SchedulerRegistry);
+      expect(registry.getTimeout(name)).toBeDefined();
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(onTick).toHaveBeenCalledTimes(1);
+
+      await app.close();
+      expect(registry.doesExist('timeout', name)).toBe(false);
+      expect(vi.getTimerCount()).toBe(0);
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(onTick).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it.each(['shared', '__proto__'])(
+    'should reject duplicate timeout name %s',
+    async (name) => {
+      @Injectable()
+      class FirstService {
+        @Timeout(name, 2500)
+        handleTimeout() {}
+      }
+
+      @Injectable()
+      class SecondService {
+        @Timeout(name, 2500)
+        handleTimeout() {}
+      }
+
+      const module = await Test.createTestingModule({
+        imports: [ScheduleModule.forRoot()],
+        providers: [FirstService, SecondService],
+      }).compile();
+
+      await expect(module.createNestApplication().init()).rejects.toThrow(
+        DUPLICATE_SCHEDULER('Timeout', name),
+      );
+    },
+  );
 
   afterEach(async () => {
     await app.close();

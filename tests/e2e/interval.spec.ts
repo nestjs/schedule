@@ -138,28 +138,64 @@ describe('Interval', () => {
     expect(logger.warn).not.toHaveBeenCalledWith();
   });
 
-  it(`should throw when two providers declare an interval with the same name`, async () => {
-    @Injectable()
-    class FirstService {
-      @Interval('shared', 2500)
-      handleInterval() {}
-    }
+  it.each(['__proto__', 'constructor', 'toString'])(
+    'should run and clean up an interval named %s',
+    async (name) => {
+      const onTick = vi.fn();
 
-    @Injectable()
-    class SecondService {
-      @Interval('shared', 2500)
-      handleInterval() {}
-    }
+      @Injectable()
+      class NamedService {
+        @Interval(name, 1000)
+        handleTick() {
+          onTick();
+        }
+      }
 
-    const module = await Test.createTestingModule({
-      imports: [ScheduleModule.forRoot()],
-      providers: [FirstService, SecondService],
-    }).compile();
+      const module = await Test.createTestingModule({
+        imports: [ScheduleModule.forRoot()],
+        providers: [NamedService],
+      }).compile();
+      app = module.createNestApplication();
+      await app.init();
 
-    await expect(module.createNestApplication().init()).rejects.toThrow(
-      DUPLICATE_SCHEDULER('Interval', 'shared'),
-    );
-  });
+      const registry = app.get(SchedulerRegistry);
+      expect(registry.getInterval(name)).toBeDefined();
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(onTick).toHaveBeenCalledTimes(1);
+
+      await app.close();
+      expect(registry.doesExist('interval', name)).toBe(false);
+      expect(vi.getTimerCount()).toBe(0);
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(onTick).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it.each(['shared', '__proto__'])(
+    'should reject duplicate interval name %s',
+    async (name) => {
+      @Injectable()
+      class FirstService {
+        @Interval(name, 2500)
+        handleInterval() {}
+      }
+
+      @Injectable()
+      class SecondService {
+        @Interval(name, 2500)
+        handleInterval() {}
+      }
+
+      const module = await Test.createTestingModule({
+        imports: [ScheduleModule.forRoot()],
+        providers: [FirstService, SecondService],
+      }).compile();
+
+      await expect(module.createNestApplication().init()).rejects.toThrow(
+        DUPLICATE_SCHEDULER('Interval', name),
+      );
+    },
+  );
 
   afterEach(async () => {
     await app.close();
