@@ -365,28 +365,64 @@ describe('Cron', () => {
     expect(logger.warn).not.toHaveBeenCalled();
   });
 
-  it(`should throw when two providers declare a cron job with the same name`, async () => {
-    @Injectable()
-    class FirstService {
-      @Cron(CronExpression.EVERY_SECOND, { name: 'shared' })
-      handleCron() {}
-    }
+  it.each(['__proto__', 'constructor', 'toString'])(
+    'should run and clean up a cron named %s',
+    async (name) => {
+      const onTick = vi.fn();
 
-    @Injectable()
-    class SecondService {
-      @Cron(CronExpression.EVERY_SECOND, { name: 'shared' })
-      handleCron() {}
-    }
+      @Injectable()
+      class NamedService {
+        @Cron(CronExpression.EVERY_SECOND, { name })
+        handleTick() {
+          onTick();
+        }
+      }
 
-    const module = await Test.createTestingModule({
-      imports: [ScheduleModule.forRoot()],
-      providers: [FirstService, SecondService],
-    }).compile();
+      const module = await Test.createTestingModule({
+        imports: [ScheduleModule.forRoot()],
+        providers: [NamedService],
+      }).compile();
+      app = module.createNestApplication();
+      await app.init();
 
-    await expect(module.createNestApplication().init()).rejects.toThrow(
-      DUPLICATE_SCHEDULER('Cron Job', 'shared'),
-    );
-  });
+      const registry = app.get(SchedulerRegistry);
+      expect(registry.getCronJob(name)).toBeDefined();
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(onTick).toHaveBeenCalledTimes(1);
+
+      await app.close();
+      expect(registry.doesExist('cron', name)).toBe(false);
+      expect(vi.getTimerCount()).toBe(0);
+      await vi.advanceTimersByTimeAsync(1000);
+      expect(onTick).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it.each(['shared', '__proto__'])(
+    'should reject duplicate cron name %s',
+    async (name) => {
+      @Injectable()
+      class FirstService {
+        @Cron(CronExpression.EVERY_SECOND, { name })
+        handleCron() {}
+      }
+
+      @Injectable()
+      class SecondService {
+        @Cron(CronExpression.EVERY_SECOND, { name })
+        handleCron() {}
+      }
+
+      const module = await Test.createTestingModule({
+        imports: [ScheduleModule.forRoot()],
+        providers: [FirstService, SecondService],
+      }).compile();
+
+      await expect(module.createNestApplication().init()).rejects.toThrow(
+        DUPLICATE_SCHEDULER('Cron Job', name),
+      );
+    },
+  );
 
   afterEach(async () => {
     await app.close();

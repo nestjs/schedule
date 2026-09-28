@@ -26,9 +26,12 @@ type CronJobOptions = TargetHost &
 export class SchedulerOrchestrator
   implements OnApplicationBootstrap, BeforeApplicationShutdown
 {
-  private readonly cronJobs: Record<string, CronJobOptions> = {};
-  private readonly timeouts: Record<string, TimeoutOptions> = {};
-  private readonly intervals: Record<string, IntervalOptions> = {};
+  private readonly cronJobs: Record<string, CronJobOptions> =
+    Object.create(null);
+  private readonly timeouts: Record<string, TimeoutOptions> =
+    Object.create(null);
+  private readonly intervals: Record<string, IntervalOptions> =
+    Object.create(null);
 
   constructor(private readonly schedulerRegistry: SchedulerRegistry) {}
 
