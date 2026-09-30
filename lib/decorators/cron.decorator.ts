@@ -59,6 +59,28 @@ export type CronOptions = {
    * (e.g. database connections, cache warm-up, external services).
    */
   initialDelay?: number;
+
+  /**
+   * When `true`, acquire a distributed lock (via `ScheduleModule` `distributed.locker`)
+   * before running. Other Nest processes that fail to acquire the lock skip this tick.
+   * Requires `ScheduleModule.forRoot({ distributed: { locker } })`.
+   * @default false
+   */
+  distributed?: boolean;
+
+  /**
+   * Lock key used when `distributed` is `true`.
+   * Defaults to the cron `name`, or `{ClassName}.{methodName}` when unnamed.
+   */
+  lockKey?: string;
+
+  /**
+   * Lock TTL in milliseconds when `distributed` is `true`.
+   * Should exceed the job's worst-case duration so a crashed instance does not
+   * permanently block the cluster; the next tick can run after expiry.
+   * @default 60000
+   */
+  lockTtlMs?: number;
 } & ( // make timeZone & utcOffset mutually exclusive
   | {
       timeZone?: string;

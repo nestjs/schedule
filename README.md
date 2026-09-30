@@ -35,6 +35,30 @@ $ npm install --save @nestjs/schedule
 
 [Overview & Tutorial](https://docs.nestjs.com/techniques/task-scheduling)
 
+### Multi-instance (optional distributed cron)
+
+By default every Nest process runs every `@Cron`. To run a job **once per cluster**, provide a `CronLocker` and opt in per job:
+
+```ts
+import { ScheduleModule, InMemoryCronLocker } from '@nestjs/schedule';
+
+// Production: implement CronLocker with Redis SET key value EX ttl NX
+ScheduleModule.forRoot({
+  distributed: {
+    locker: new InMemoryCronLocker(), // demo / tests only
+  },
+});
+
+@Cron('0 18 * * *', {
+  distributed: true,
+  lockKey: 'cron:nightly-job',
+  lockTtlMs: 10 * 60 * 1000,
+})
+handleNightly() { /* ... */ }
+```
+
+Jobs without `distributed: true` keep the existing all-instances behavior.
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).

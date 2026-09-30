@@ -5,7 +5,11 @@ import { SchedulerType } from './enums/scheduler-type.enum.js';
 import { SchedulerMetadataAccessor } from './schedule-metadata.accessor.js';
 import { SchedulerOrchestrator } from './scheduler.orchestrator.js';
 import { ScheduleModuleOptions } from './interfaces/schedule-module-options.interface.js';
+import { CronOptions } from './decorators/cron.decorator.js';
 import { SCHEDULE_MODULE_OPTIONS } from './schedule.constants.js';
+import { CronJobParams } from 'cron';
+
+const DEFAULT_DISTRIBUTED_LOCK_TTL_MS = 60_000;
 
 @Injectable()
 export class ScheduleExplorer implements OnModuleInit {
@@ -68,7 +72,12 @@ export class ScheduleExplorer implements OnModuleInit {
           return;
         }
         const cronMetadata = this.metadataAccessor.getCronMetadata(methodRef);
-        const cronFn = this.wrapFunctionInTryCatchBlocks(methodRef, instance);
+        const cronFn = this.wrapFunctionInTryCatchBlocks(
+          methodRef,
+          instance,
+          key,
+          cronMetadata!,
+        );
 
         return this.schedulerOrchestrator.addCron(cronFn, cronMetadata!);
       }
@@ -150,9 +159,56 @@ export class ScheduleExplorer implements OnModuleInit {
     }
   }
 
-  private wrapFunctionInTryCatchBlocks(methodRef: Function, instance: object) {
+  private wrapFunctionInTryCatchBlocks(
+    methodRef: Function,
+    instance: object,
+    methodKey?: string,
+    cronMetadata?: CronOptions &
+      Record<'cronTime', CronJobParams['cronTime']>,
+  ) {
     return async (...args: unknown[]) => {
       try {
+        if (cronMetadata?.distributed) {
+          const locker = this.moduleOptions.distributed?.locker;
+          if (!locker) {
+            this.logger.error(
+              `Cron "${cronMetadata.name ?? methodKey}" is marked distributed: true but ScheduleModule was not configured with distributed.locker — skipping`,
+            );
+            return;
+          }
+
+          const lockKey =
+            cronMetadata.lockKey ??
+            cronMetadata.name ??
+            `${instance.constructor?.name ?? 'Anonymous'}.${methodKey ?? 'cron'}`;
+          const lockTtlMs =
+            cronMetadata.lockTtlMs ?? DEFAULT_DISTRIBUTED_LOCK_TTL_MS;
+
+          const acquired = await locker.tryAcquire(lockKey, lockTtlMs);
+          if (!acquired) {
+            this.logger.debug(
+              `Cron "${lockKey}" skipped — another instance holds the distributed lock`,
+            );
+            return;
+          }
+
+          try {
+            await methodRef.call(instance, ...args);
+          } finally {
+            if (typeof locker.release === 'function') {
+              try {
+                await locker.release(lockKey);
+              } catch (releaseError) {
+                this.logger.warn(
+                  `Failed to release distributed lock "${lockKey}"`,
+                  releaseError as Error,
+                );
+              }
+            }
+          }
+          return;
+        }
+
         await methodRef.call(instance, ...args);
       } catch (error) {
         this.logger.error(error);
