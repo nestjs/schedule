@@ -35,6 +35,7 @@ export type CronOptions = {
   /**
    * If true, no additional instances of cronjob will run until the current onTick callback has completed.
    * Any new scheduled executions that occur while the current cronjob is running will be skipped entirely.
+   * Application shutdown also waits for the current callback to finish.
    */
   waitForCompletion?: boolean;
 

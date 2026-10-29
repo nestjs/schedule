@@ -44,7 +44,7 @@ export class SchedulerOrchestrator
   beforeApplicationShutdown() {
     this.clearTimeouts();
     this.clearIntervals();
-    this.closeCronJobs();
+    return this.closeCronJobs();
   }
 
   mountIntervals() {
@@ -112,15 +112,22 @@ export class SchedulerOrchestrator
       .forEach((key) => this.schedulerRegistry.deleteInterval(key));
   }
 
-  closeCronJobs() {
+  async closeCronJobs() {
     Object.values(this.cronJobs).forEach(({ initialDelayRef }) => {
       if (initialDelayRef !== undefined) {
         clearTimeout(initialDelayRef);
       }
     });
-    Array.from(this.schedulerRegistry.getCronJobs().keys()).forEach((key) =>
-      this.schedulerRegistry.deleteCronJob(key),
-    );
+    const cronJobs = this.schedulerRegistry.getCronJobs();
+    const completions: ReturnType<CronJob['stop']>[] = [];
+    // Stop every job before waiting for callbacks that opted into completion.
+    // Snapshot names because onComplete can synchronously register new jobs.
+    for (const name of Array.from(cronJobs.keys())) {
+      const cronJob = this.schedulerRegistry.getCronJob(name);
+      completions.push(cronJob.stop());
+      cronJobs.delete(name);
+    }
+    await Promise.all(completions);
   }
 
   addTimeout(methodRef: Function, timeout: number, name: string = crypto.randomUUID()) {
