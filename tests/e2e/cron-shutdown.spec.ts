@@ -104,6 +104,75 @@ describe('Cron shutdown', () => {
     },
   );
 
+  it('should not stop jobs added by a completion callback during shutdown', async () => {
+    const replacementOnComplete = vi.fn();
+    const job = CronJob.from({
+      cronTime: CronExpression.EVERY_SECOND,
+      onTick: vi.fn(),
+      onComplete: () => {
+        const replacement = CronJob.from({
+          cronTime: CronExpression.EVERY_SECOND,
+          onTick: vi.fn(),
+          onComplete: replacementOnComplete,
+          start: true,
+        });
+        registry.addCronJob('replacement', replacement);
+      },
+      start: true,
+    });
+    registry.addCronJob('original', job);
+
+    try {
+      await app.close();
+
+      expect(replacementOnComplete).not.toHaveBeenCalled();
+      expect(registry.doesExist('cron', 'original')).toBe(false);
+      expect(registry.getCronJob('replacement').isActive).toBe(true);
+    } finally {
+      if (registry.doesExist('cron', 'replacement')) {
+        registry.deleteCronJob('replacement');
+      }
+    }
+  });
+
+  it('should stop a later job replaced by a completion callback during shutdown', async () => {
+    const replacementOnComplete = vi.fn();
+    const replacement = CronJob.from({
+      cronTime: CronExpression.EVERY_SECOND,
+      onTick: vi.fn(),
+      onComplete: replacementOnComplete,
+    });
+    const first = CronJob.from({
+      cronTime: CronExpression.EVERY_SECOND,
+      onTick: vi.fn(),
+      onComplete: () => {
+        registry.deleteCronJob('replaced');
+        registry.addCronJob('replaced', replacement);
+        replacement.start();
+      },
+      start: true,
+    });
+    const replaced = CronJob.from({
+      cronTime: CronExpression.EVERY_SECOND,
+      onTick: vi.fn(),
+      start: true,
+    });
+    registry.addCronJob('first', first);
+    registry.addCronJob('replaced', replaced);
+
+    try {
+      await app.close();
+
+      expect(replacement.isActive).toBe(false);
+      expect(replacementOnComplete).toHaveBeenCalledTimes(1);
+      expect(registry.getCronJobs().size).toBe(0);
+    } finally {
+      if (replacement.isActive) {
+        replacement.stop();
+      }
+    }
+  });
+
   it('should keep deleting an active job synchronously from its own callback', async () => {
     const deleted = vi.fn();
     let deletionResult: unknown = 'not deleted';

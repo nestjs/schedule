@@ -121,7 +121,9 @@ export class SchedulerOrchestrator
     const cronJobs = this.schedulerRegistry.getCronJobs();
     const completions: ReturnType<CronJob['stop']>[] = [];
     // Stop every job before waiting for callbacks that opted into completion.
-    for (const [name, cronJob] of cronJobs) {
+    // Snapshot names because onComplete can synchronously register new jobs.
+    for (const name of Array.from(cronJobs.keys())) {
+      const cronJob = this.schedulerRegistry.getCronJob(name);
       completions.push(cronJob.stop());
       cronJobs.delete(name);
     }
