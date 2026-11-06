@@ -1,7 +1,17 @@
 {
   "name": "@nestjs/schedule",
   "version": "12.0.2",
-  "description": "Nest - modern, fast, powerful node.js web framework (@schedule)",
+  "description": "Scheduled jobs for NestJS: cron jobs, intervals and timeouts as decorators on provider methods, which can also be created and stopped at runtime.",
+  "keywords": [
+    "nestjs",
+    "nest",
+    "cron",
+    "cron-jobs",
+    "scheduler",
+    "task-scheduling",
+    "scheduled-tasks",
+    "interval"
+  ],
   "author": "Kamil Mysliwiec",
   "license": "MIT",
   "type": "module",
