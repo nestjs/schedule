@@ -1,6 +1,6 @@
 {
   "name": "@nestjs/schedule",
-  "version": "12.0.2",
+  "version": "12.0.3",
   "description": "Scheduled jobs for NestJS: cron jobs, intervals and timeouts as decorators on provider methods, which can also be created and stopped at runtime.",
   "keywords": [
     "nestjs",
