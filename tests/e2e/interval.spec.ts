@@ -97,6 +97,46 @@ describe('Interval', () => {
     expect(instance).toBeDefined();
   });
 
+  it('should register a named interval once when the provider has a useExisting alias', async () => {
+    @Injectable()
+    class NamedService {
+      @Interval('aliased', 1000)
+      handleInterval() {}
+    }
+
+    const module = await Test.createTestingModule({
+      imports: [ScheduleModule.forRoot()],
+      providers: [
+        NamedService,
+        { provide: 'ALIAS', useExisting: NamedService },
+      ],
+    }).compile();
+    app = module.createNestApplication();
+    await app.init();
+
+    expect(app.get(SchedulerRegistry).getIntervals()).toEqual(['aliased']);
+  });
+
+  it('should register an unnamed interval once when the provider has a useExisting alias', async () => {
+    @Injectable()
+    class UnnamedService {
+      @Interval(1000)
+      handleInterval() {}
+    }
+
+    const module = await Test.createTestingModule({
+      imports: [ScheduleModule.forRoot()],
+      providers: [
+        UnnamedService,
+        { provide: 'ALIAS', useExisting: UnnamedService },
+      ],
+    }).compile();
+    app = module.createNestApplication();
+    await app.init();
+
+    expect(app.get(SchedulerRegistry).getIntervals()).toHaveLength(1);
+  });
+
   it('should clean up dynamic intervals on application shutdown', async () => {
     const service = app.get(IntervalService);
     await app.init();
