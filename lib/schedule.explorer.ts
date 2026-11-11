@@ -32,7 +32,7 @@ export class ScheduleExplorer implements OnModuleInit {
     instanceWrappers.forEach((wrapper: InstanceWrapper) => {
       const { instance } = wrapper;
 
-      if (!instance || !Object.getPrototypeOf(instance)) {
+      if (wrapper.isAlias || !instance || !Object.getPrototypeOf(instance)) {
         return;
       }
 
