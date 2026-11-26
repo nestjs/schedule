@@ -35,6 +35,10 @@ $ npm install --save @nestjs/schedule
 
 [Overview & Tutorial](https://docs.nestjs.com/techniques/task-scheduling)
 
+## Observability
+
+Scheduled handlers are instrumented automatically by [NestJS Observe](https://observe.nestjs.com/?ref=readme-schedule), the official observability platform for Nest. Every `@Cron`, `@Interval` and `@Timeout` run is reported as a job - duration and outcome - and a failed run carries the resolved stack trace, the logs written during it, and the waterfall of what it did before it threw: the queries it ran, the outbound calls, the provider methods. A job heartbeat alert fires when a named job stops completing on schedule - the nightly run that silently didn't happen. See the [Observability](https://docs.nestjs.com/observability/overview) chapter.
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
